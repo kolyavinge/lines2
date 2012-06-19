@@ -14,6 +14,7 @@ public class Lines2Activity extends Activity {
 		Field field = fieldLoader.getField(10, 8);
 		FieldView fieldView = new FieldView(this);
 		fieldView.setField(field);
+//		fieldView.set
 		setContentView(fieldView);
 	}
 }

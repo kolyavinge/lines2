@@ -11,15 +11,19 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class FieldView extends View {
 
+	private static final int offsetX = 10, offsetY = 20;
 	private static final Map<lines2.model.Color, Integer> ballColors;
-	private int cellSize = 32;
+	private int cellSize = 40;
 	private Field field;
+	private Cell selectedCell;
 
 	static {
 		ballColors = new HashMap<lines2.model.Color, Integer>();
@@ -61,8 +65,28 @@ public class FieldView extends View {
 		if (field == null)
 			return;
 
+		canvas.save();
+//		canvas.translate(offsetX, offsetY);
+
+		drawSelectedCell(canvas);
 		drawGrid(canvas);
 		drawCellBalls(canvas);
+
+		canvas.restore();
+	}
+
+	private void drawSelectedCell(Canvas canvas) {
+		if (noSelectedCell())
+			return;
+
+		Rect rect = new Rect(
+				selectedCell.getCol() * cellSize,
+				selectedCell.getRow() * cellSize,
+				selectedCell.getCol() * cellSize + cellSize,
+				selectedCell.getRow() * cellSize + cellSize);
+		Paint paint = new Paint();
+		paint.setColor(Color.YELLOW);
+		canvas.drawRect(rect, paint);
 	}
 
 	private void drawGrid(Canvas canvas) {
@@ -121,6 +145,8 @@ public class FieldView extends View {
 			drawColoredBall(canvas, (ColoredBall) ball);
 			break;
 		}
+
+		//		throw new IllegalArgumentException();
 	}
 
 	private void drawColoredBall(Canvas canvas, ColoredBall ball) {
@@ -135,5 +161,42 @@ public class FieldView extends View {
 			throw new IllegalArgumentException();
 
 		return ballColors.get(color);
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		int row = (int) (event.getY() / cellSize);
+		int col = (int) (event.getX() / cellSize);
+
+		if (field.cellExists(row, col)) {
+			Cell touchedCell = field.getCell(row, col);
+			if (noSelectedCell() && touchedCell.isEmpty() == false) {
+				selectedCell = touchedCell;
+			} else {
+				tryMoveBallTo(touchedCell);
+				clearSelectedCell();
+			}
+		} else {
+			clearSelectedCell();
+		}
+
+		postInvalidate();
+
+		return super.onTouchEvent(event);
+	}
+
+	private boolean noSelectedCell() {
+		return selectedCell == null;
+	}
+
+	private void clearSelectedCell() {
+		selectedCell = null;
+	}
+
+	private void tryMoveBallTo(Cell destinationCell) {
+		try {
+			field.moveBall(selectedCell, destinationCell);
+		} catch (Exception exp) {
+		}
 	}
 }

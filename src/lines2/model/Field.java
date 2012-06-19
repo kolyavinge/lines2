@@ -24,9 +24,13 @@ public class Field {
 	public Cell getCell(int row, int col) {
 		return cells[row][col];
 	}
-	
+
 	public Iterable<Cell> getCells() {
 		return new IterableMatrix<Cell>(cells);
+	}
+
+	public boolean cellExists(int row, int col) {
+		return (0 <= row && row < rows) && (0 <= col && col < cols);
 	}
 
 	public void moveBall(Cell from, Cell to) {
