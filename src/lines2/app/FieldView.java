@@ -19,11 +19,10 @@ import android.view.View;
 
 public class FieldView extends View {
 
-	private static final int offsetX = 10, offsetY = 20;
+	//	private static final int offsetX = 10, offsetY = 20;
 	private static final Map<lines2.model.Color, Integer> ballColors;
 	private int cellSize = 40;
-	private Field field;
-	private Cell selectedCell;
+	private FieldPresenter presenter;
 
 	static {
 		ballColors = new HashMap<lines2.model.Color, Integer>();
@@ -53,20 +52,24 @@ public class FieldView extends View {
 	}
 
 	public Field getField() {
-		return field;
+		return presenter.getField();
 	}
 
-	public void setField(Field field) {
-		this.field = field;
+	public FieldPresenter getPresenter() {
+		return presenter;
+	}
+
+	public void setPresenter(FieldPresenter presenter) {
+		this.presenter = presenter;
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		if (field == null)
+		if (getField() == null)
 			return;
 
 		canvas.save();
-//		canvas.translate(offsetX, offsetY);
+		//		canvas.translate(offsetX, offsetY);
 
 		drawSelectedCell(canvas);
 		drawGrid(canvas);
@@ -76,17 +79,21 @@ public class FieldView extends View {
 	}
 
 	private void drawSelectedCell(Canvas canvas) {
-		if (noSelectedCell())
+		if (presenter.noSelectedCell())
 			return;
 
-		Rect rect = new Rect(
-				selectedCell.getCol() * cellSize,
-				selectedCell.getRow() * cellSize,
-				selectedCell.getCol() * cellSize + cellSize,
-				selectedCell.getRow() * cellSize + cellSize);
+		Rect rect = getRectForCell(presenter.getSelectedCell());
 		Paint paint = new Paint();
 		paint.setColor(Color.YELLOW);
 		canvas.drawRect(rect, paint);
+	}
+
+	private Rect getRectForCell(Cell cell) {
+		return new Rect(
+				cell.getCol() * cellSize,
+				cell.getRow() * cellSize,
+				cell.getCol() * cellSize + cellSize,
+				cell.getRow() * cellSize + cellSize);
 	}
 
 	private void drawGrid(Canvas canvas) {
@@ -96,10 +103,10 @@ public class FieldView extends View {
 
 	private void drawHorizontalLines(Canvas canvas) {
 		Paint paint = getWhitePaint();
-		for (int row = 0; row <= field.getRows(); row++) {
+		for (int row = 0; row <= getField().getRows(); row++) {
 			float x0 = 0;
 			float y0 = row * cellSize;
-			float x1 = field.getCols() * cellSize;
+			float x1 = getField().getCols() * cellSize;
 			float y1 = y0;
 			canvas.drawLine(x0, y0, x1, y1, paint);
 		}
@@ -107,11 +114,11 @@ public class FieldView extends View {
 
 	private void drawVerticalLines(Canvas canvas) {
 		Paint paint = getWhitePaint();
-		for (int col = 0; col <= field.getCols(); col++) {
+		for (int col = 0; col <= getField().getCols(); col++) {
 			float x0 = col * cellSize;
 			float y0 = 0;
 			float x1 = x0;
-			float y1 = field.getRows() * cellSize;
+			float y1 = getField().getRows() * cellSize;
 			canvas.drawLine(x0, y0, x1, y1, paint);
 		}
 	}
@@ -124,7 +131,7 @@ public class FieldView extends View {
 	}
 
 	private void drawCellBalls(Canvas canvas) {
-		for (Cell cell : field.getCells()) {
+		for (Cell cell : getField().getCells()) {
 			drawCellBall(canvas, cell);
 		}
 	}
@@ -144,9 +151,9 @@ public class FieldView extends View {
 		case COLORED_BALL:
 			drawColoredBall(canvas, (ColoredBall) ball);
 			break;
+		default:
+			throw new IllegalArgumentException();
 		}
-
-		//		throw new IllegalArgumentException();
 	}
 
 	private void drawColoredBall(Canvas canvas, ColoredBall ball) {
@@ -168,35 +175,8 @@ public class FieldView extends View {
 		int row = (int) (event.getY() / cellSize);
 		int col = (int) (event.getX() / cellSize);
 
-		if (field.cellExists(row, col)) {
-			Cell touchedCell = field.getCell(row, col);
-			if (noSelectedCell() && touchedCell.isEmpty() == false) {
-				selectedCell = touchedCell;
-			} else {
-				tryMoveBallTo(touchedCell);
-				clearSelectedCell();
-			}
-		} else {
-			clearSelectedCell();
-		}
-
-		postInvalidate();
+		presenter.selectCell(row, col);
 
 		return super.onTouchEvent(event);
-	}
-
-	private boolean noSelectedCell() {
-		return selectedCell == null;
-	}
-
-	private void clearSelectedCell() {
-		selectedCell = null;
-	}
-
-	private void tryMoveBallTo(Cell destinationCell) {
-		try {
-			field.moveBall(selectedCell, destinationCell);
-		} catch (Exception exp) {
-		}
 	}
 }
