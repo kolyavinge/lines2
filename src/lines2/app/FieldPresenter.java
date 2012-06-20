@@ -12,21 +12,37 @@ public class FieldPresenter {
 		this.field = field;
 	}
 
-	public Field getField() {
-		return field;
+	public Iterable<Cell> getFieldCells() {
+		return field.getCells();
+	}
+
+	public int getFieldRows() {
+		return field.getRows();
+	}
+
+	public int getFieldCols() {
+		return field.getCols();
 	}
 
 	public void selectCell(int row, int col) {
-		if (field.cellExists(row, col)) {
-			Cell currentCell = field.getCell(row, col);
-			if (noSelectedCell() && !currentCell.isEmpty()) {
+		if (!field.cellExists(row, col)) {
+			clearSelectedCell();
+			return;
+		}
+
+		Cell currentCell = field.getCell(row, col);
+
+		if (noSelectedCell()) {
+			if (!currentCell.isEmpty()) {
 				selectedCell = currentCell;
-			} else {
-				tryMoveBallTo(currentCell);
-				clearSelectedCell();
 			}
 		} else {
-			clearSelectedCell();
+			if (currentCell.isEmpty()) {
+				tryMoveBallTo(currentCell);
+				clearSelectedCell();
+			} else {
+				selectedCell = currentCell;
+			}
 		}
 	}
 

@@ -6,7 +6,6 @@ import java.util.Map;
 import lines2.model.Ball;
 import lines2.model.Cell;
 import lines2.model.ColoredBall;
-import lines2.model.Field;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -51,10 +50,6 @@ public class FieldView extends View {
 		this.cellSize = cellSize;
 	}
 
-	public Field getField() {
-		return presenter.getField();
-	}
-
 	public FieldPresenter getPresenter() {
 		return presenter;
 	}
@@ -65,9 +60,6 @@ public class FieldView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		if (getField() == null)
-			return;
-
 		canvas.save();
 		//		canvas.translate(offsetX, offsetY);
 
@@ -103,10 +95,10 @@ public class FieldView extends View {
 
 	private void drawHorizontalLines(Canvas canvas) {
 		Paint paint = getWhitePaint();
-		for (int row = 0; row <= getField().getRows(); row++) {
+		for (int row = 0; row <= presenter.getFieldRows(); row++) {
 			float x0 = 0;
 			float y0 = row * cellSize;
-			float x1 = getField().getCols() * cellSize;
+			float x1 = presenter.getFieldCols() * cellSize;
 			float y1 = y0;
 			canvas.drawLine(x0, y0, x1, y1, paint);
 		}
@@ -114,11 +106,11 @@ public class FieldView extends View {
 
 	private void drawVerticalLines(Canvas canvas) {
 		Paint paint = getWhitePaint();
-		for (int col = 0; col <= getField().getCols(); col++) {
+		for (int col = 0; col <= presenter.getFieldCols(); col++) {
 			float x0 = col * cellSize;
 			float y0 = 0;
 			float x1 = x0;
-			float y1 = getField().getRows() * cellSize;
+			float y1 = presenter.getFieldRows() * cellSize;
 			canvas.drawLine(x0, y0, x1, y1, paint);
 		}
 	}
@@ -131,7 +123,7 @@ public class FieldView extends View {
 	}
 
 	private void drawCellBalls(Canvas canvas) {
-		for (Cell cell : getField().getCells()) {
+		for (Cell cell : presenter.getFieldCells()) {
 			drawCellBall(canvas, cell);
 		}
 	}
