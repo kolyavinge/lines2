@@ -1,6 +1,7 @@
 package lines2.model;
 
 import junit.framework.TestCase;
+import lines2.common.TestUtils;
 
 public class CellTest extends TestCase {
 

@@ -14,13 +14,10 @@ public class Lines2Activity extends Activity {
 		FieldLoader fieldLoader = new FieldLoader();
 		Field field = fieldLoader.getField(10, 8);
 		
-		FieldPresenter fieldPresenter = new FieldPresenter();
+		FieldPresenter fieldPresenter = new FieldPresenter(field);
 		
 		FieldView fieldView = new FieldView(this);
 		fieldView.setPresenter(fieldPresenter);
-		
-		fieldPresenter.setField(field);
-		fieldPresenter.setView(fieldView);
 		
 		setContentView(fieldView);
 	}

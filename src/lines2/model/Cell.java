@@ -31,11 +31,11 @@ public class Cell {
 		return ball;
 	}
 
-	void setBall(Ball ball) {
+	public void setBall(Ball ball) {
 		this.ball = ball;
 	}
 
-	void clearBall() {
+	public void clearBall() {
 		ball = null;
 	}
 

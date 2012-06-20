@@ -174,8 +174,8 @@ public class FieldView extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		int row = (int) (event.getY() / cellSize);
 		int col = (int) (event.getX() / cellSize);
-
 		presenter.selectCell(row, col);
+		postInvalidate();
 
 		return super.onTouchEvent(event);
 	}

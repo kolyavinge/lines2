@@ -1,6 +1,9 @@
-package lines2.model;
+package lines2.common;
 
-final class TestUtils {
+import lines2.model.Ball;
+import lines2.model.BallType;
+
+public final class TestUtils {
 
 	public static Ball getBall() {
 		return new Ball() {

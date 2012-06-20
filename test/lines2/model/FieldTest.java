@@ -1,6 +1,7 @@
 package lines2.model;
 
 import junit.framework.TestCase;
+import lines2.common.TestUtils;
 
 public class FieldTest extends TestCase {
 
@@ -77,5 +78,13 @@ public class FieldTest extends TestCase {
 			fail();
 		} catch (IllegalArgumentException exp) {
 		}
+	}
+
+	public void testCellExists() {
+		assertTrue(field.cellExists(0, 0));
+		assertFalse(field.cellExists(-1, 0));
+		assertFalse(field.cellExists(0, -1));
+		assertTrue(field.cellExists(rows - 1, cols - 1));
+		assertFalse(field.cellExists(rows, cols));
 	}
 }
