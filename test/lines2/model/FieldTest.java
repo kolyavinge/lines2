@@ -8,9 +8,15 @@ public class FieldTest extends TestCase {
 	private int rows = 10;
 	private int cols = 5;
 	private Field field;
+	private MoveStrategy moveStrategy = new MoveStrategy() {
+		public boolean checkMove(Field field, int startRow, int startCol, int finishRow, int finishCol) {
+			return true;
+		}
+	};
 
 	public void setUp() {
 		field = new Field(rows, cols);
+		field.setMoveStrategy(moveStrategy);
 	}
 
 	public void testFieldInit() {

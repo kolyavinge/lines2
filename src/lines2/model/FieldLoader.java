@@ -8,6 +8,8 @@ public class FieldLoader {
 
 	public Field getField(int rows, int cols) {
 		Field field = new Field(rows, cols);
+		field.setMoveStrategy(new SimpleMoveStrategy());
+
 		for (int i = 0; i < 8; i++) {
 			int row = rand.nextInt(field.getRows());
 			int col = rand.nextInt(field.getCols());
@@ -15,7 +17,7 @@ public class FieldLoader {
 			Ball ball = new ColoredBall(Color.getRandomColor());
 			cell.setBall(ball);
 		}
-		
+
 		return field;
 	}
 }

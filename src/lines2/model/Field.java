@@ -6,11 +6,20 @@ public class Field {
 
 	private int rows, cols;
 	private Cell[][] cells;
+	private MoveStrategy moveStrategy;
 
 	public Field(int rows, int cols) {
 		this.rows = rows;
 		this.cols = cols;
 		initCells();
+	}
+
+	public MoveStrategy getMoveStrategy() {
+		return moveStrategy;
+	}
+
+	public void setMoveStrategy(MoveStrategy moveStrategy) {
+		this.moveStrategy = moveStrategy;
 	}
 
 	public int getRows() {
@@ -34,18 +43,20 @@ public class Field {
 	}
 
 	public void moveBall(Cell from, Cell to) {
-		if (from == to) {
+		if (from == to)
 			throw new IllegalArgumentException();
-		}
-		if (from.isEmpty()) {
+		if (from.isEmpty())
 			throw new IllegalArgumentException();
-		}
-		if (to.isEmpty() == false) {
+		if (to.isEmpty() == false)
 			throw new IllegalArgumentException();
+
+		boolean result = moveStrategy.checkMove(this, from.getRow(), from.getCol(), to.getRow(), to.getCol());
+
+		if (result) {
+			Ball ball = from.getBall();
+			from.clearBall();
+			to.setBall(ball);
 		}
-		Ball ball = from.getBall();
-		from.clearBall();
-		to.setBall(ball);
 	}
 
 	private void initCells() {
