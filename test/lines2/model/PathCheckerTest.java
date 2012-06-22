@@ -79,7 +79,7 @@ public class PathCheckerTest extends TestCase {
 	}
 
 	public void testCheck3() {
-		pathChecker.setStartPoint(0, 1);
+		pathChecker.setStartPoint(0, 2);
 		pathChecker.setFinishPoint(0, 0);
 		assertFalse(pathChecker.check());
 	}
@@ -146,6 +146,26 @@ public class PathCheckerTest extends TestCase {
 		}
 
 		pathChecker.setFinishPoint(0, 10000);
+		try {
+			pathChecker.check();
+			fail();
+		} catch (IllegalArgumentException exp) {
+		}
+	}
+	
+	public void testNonEmptyStartPoint() {
+		pathChecker.setStartPoint(1, 1);
+		pathChecker.setFinishPoint(0, 0);
+		try {
+			pathChecker.check();
+			fail();
+		} catch (IllegalArgumentException exp) {
+		}
+	}
+	
+	public void testNonEmptyFinishPoint() {
+		pathChecker.setStartPoint(0, 0);
+		pathChecker.setFinishPoint(1, 1);
 		try {
 			pathChecker.check();
 			fail();

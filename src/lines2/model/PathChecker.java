@@ -61,12 +61,12 @@ class PathChecker {
 	}
 
 	private void validateStartPoint() {
-		if (!cellExists(startRow, startCol))
+		if (!cellExists(startRow, startCol) || !isEmpty(startRow, startCol))
 			throw new IllegalArgumentException("start point out of field");
 	}
 
 	private void validateFinishPoint() {
-		if (!cellExists(finishRow, finishCol))
+		if (!cellExists(finishRow, finishCol) || !isEmpty(finishRow, finishCol))
 			throw new IllegalArgumentException("finish point out of field");
 	}
 
