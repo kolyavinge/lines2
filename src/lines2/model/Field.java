@@ -10,6 +10,7 @@ public class Field {
 	private Cell[][] cells;
 	private MoveStrategy moveStrategy;
 	private EraseStrategy eraseStrategy;
+	private FillStrategy fillStrategy;
 
 	public Field(int rows, int cols) {
 		this.rows = rows;
@@ -31,6 +32,14 @@ public class Field {
 
 	public void setEraseStrategy(EraseStrategy eraseStrategy) {
 		this.eraseStrategy = eraseStrategy;
+	}
+
+	public FillStrategy getFillStrategy() {
+		return fillStrategy;
+	}
+
+	public void setFillStrategy(FillStrategy fillStrategy) {
+		this.fillStrategy = fillStrategy;
 	}
 
 	public int getRows() {
@@ -57,8 +66,13 @@ public class Field {
 		verifyMoveBallArgs(from, to);
 		if (checkMove(from, to)) {
 			swapBalls(from, to);
-			eraseCells(to);
+			if (eraseCells(to) == false)
+				fill();
 		}
+	}
+
+	private void fill() {
+		fillStrategy.fill(this);
 	}
 
 	private boolean checkMove(Cell from, Cell to) {
@@ -82,10 +96,12 @@ public class Field {
 		to.setBall(ball);
 	}
 
-	private void eraseCells(Cell lastStepCell) {
+	private boolean eraseCells(Cell lastStepCell) {
 		Collection<Cell> erasedCells = eraseStrategy.getErasedCells(this, lastStepCell);
 		for (Cell cell : erasedCells)
 			cell.clear();
+
+		return !erasedCells.isEmpty();
 	}
 
 	private void initCells() {

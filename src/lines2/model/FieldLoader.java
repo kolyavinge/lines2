@@ -10,6 +10,9 @@ public class FieldLoader {
 		Field field = new Field(rows, cols);
 		field.setMoveStrategy(new SimpleMoveStrategy());
 		field.setEraseStrategy(new StraightEraseStrategy(4));
+		SimpleFillStrategy fillStrategy = new SimpleFillStrategy(3);
+		fillStrategy.setFillRange(2, 3);
+		field.setFillStrategy(fillStrategy);
 
 		for (int i = 0; i < 8; i++) {
 			int row = rand.nextInt(field.getRows());

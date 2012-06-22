@@ -1,8 +1,5 @@
 package lines2.model;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import junit.framework.TestCase;
 import lines2.common.TestUtils;
 
@@ -10,25 +7,16 @@ public class FieldTest extends TestCase {
 
 	private int rows = 10;
 	private int cols = 5;
-
 	private Field field;
-
-	private MoveStrategy moveStrategy = new MoveStrategy() {
-		public boolean checkMove(Field field, Cell startCell, Cell finishCell) {
-			return true;
-		}
-	};
-
-	private EraseStrategy eraseStrategy = new EraseStrategy() {
-		public Collection<Cell> getErasedCells(Field field, Cell lastStepCell) {
-			return Collections.emptyList();
-		}
-	};
+	private MoveStrategy moveStrategy = TestUtils.getMoveStrategyStub();
+	private EraseStrategy eraseStrategy = TestUtils.getEraseStrategyStub();
+	private FillStrategy fillStrategy = TestUtils.getFillStrategyStub();
 
 	public void setUp() {
 		field = new Field(rows, cols);
 		field.setMoveStrategy(moveStrategy);
 		field.setEraseStrategy(eraseStrategy);
+		field.setFillStrategy(fillStrategy);
 	}
 
 	public void testFieldInit() {
