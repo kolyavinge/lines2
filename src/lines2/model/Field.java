@@ -54,19 +54,26 @@ public class Field {
 	}
 
 	public void moveBall(Cell from, Cell to) {
-		if (from == to)
-			throw new IllegalArgumentException();
-		if (from.isEmpty())
-			throw new IllegalArgumentException();
-		if (to.isEmpty() == false)
-			throw new IllegalArgumentException();
-
-		boolean result = moveStrategy.checkMove(this, from, to);
-
-		if (result) {
+		verifyMoveBallArgs(from, to);
+		if (checkMove(from, to)) {
 			swapBalls(from, to);
 			eraseCells(to);
 		}
+	}
+
+	private boolean checkMove(Cell from, Cell to) {
+		return moveStrategy.checkMove(this, from, to);
+	}
+
+	private void verifyMoveBallArgs(Cell from, Cell to) {
+		if (from == to)
+			throw new IllegalArgumentException();
+
+		if (from.isEmpty())
+			throw new IllegalArgumentException();
+
+		if (to.isEmpty() == false)
+			throw new IllegalArgumentException();
 	}
 
 	private void swapBalls(Cell from, Cell to) {

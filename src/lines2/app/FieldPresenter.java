@@ -32,17 +32,11 @@ public class FieldPresenter {
 
 		Cell currentCell = field.getCell(row, col);
 
-		if (noSelectedCell()) {
-			if (!currentCell.isEmpty()) {
-				selectedCell = currentCell;
-			}
-		} else {
-			if (currentCell.isEmpty()) {
-				tryMoveBallTo(currentCell);
-				clearSelectedCell();
-			} else {
-				selectedCell = currentCell;
-			}
+		if (!currentCell.isEmpty()) {
+			selectedCell = currentCell;
+		} else if (!noSelectedCell() && currentCell.isEmpty()) {
+			tryMoveBallTo(currentCell);
+			clearSelectedCell();
 		}
 	}
 
