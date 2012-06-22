@@ -35,7 +35,7 @@ public class Cell {
 		this.ball = ball;
 	}
 
-	public void clearBall() {
+	public void clear() {
 		ball = null;
 	}
 

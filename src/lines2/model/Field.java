@@ -1,5 +1,7 @@
 package lines2.model;
 
+import java.util.Collection;
+
 import lines2.utils.IterableMatrix;
 
 public class Field {
@@ -7,6 +9,7 @@ public class Field {
 	private int rows, cols;
 	private Cell[][] cells;
 	private MoveStrategy moveStrategy;
+	private EraseStrategy eraseStrategy;
 
 	public Field(int rows, int cols) {
 		this.rows = rows;
@@ -20,6 +23,14 @@ public class Field {
 
 	public void setMoveStrategy(MoveStrategy moveStrategy) {
 		this.moveStrategy = moveStrategy;
+	}
+
+	public EraseStrategy getEraseStrategy() {
+		return eraseStrategy;
+	}
+
+	public void setEraseStrategy(EraseStrategy eraseStrategy) {
+		this.eraseStrategy = eraseStrategy;
 	}
 
 	public int getRows() {
@@ -50,13 +61,24 @@ public class Field {
 		if (to.isEmpty() == false)
 			throw new IllegalArgumentException();
 
-		boolean result = moveStrategy.checkMove(this, from.getRow(), from.getCol(), to.getRow(), to.getCol());
+		boolean result = moveStrategy.checkMove(this, from, to);
 
 		if (result) {
-			Ball ball = from.getBall();
-			from.clearBall();
-			to.setBall(ball);
+			swapBalls(from, to);
+			eraseCells(to);
 		}
+	}
+
+	private void swapBalls(Cell from, Cell to) {
+		Ball ball = from.getBall();
+		from.clear();
+		to.setBall(ball);
+	}
+
+	private void eraseCells(Cell lastStepCell) {
+		Collection<Cell> erasedCells = eraseStrategy.getErasedCells(this, lastStepCell);
+		for (Cell cell : erasedCells)
+			cell.clear();
 	}
 
 	private void initCells() {

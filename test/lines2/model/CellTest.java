@@ -40,7 +40,7 @@ public class CellTest extends TestCase {
 		Ball ball = TestUtils.getBall();
 		cell.setBall(ball);
 		assertFalse(cell.isEmpty());
-		cell.clearBall();
+		cell.clear();
 		assertTrue(cell.isEmpty());
 	}
 }

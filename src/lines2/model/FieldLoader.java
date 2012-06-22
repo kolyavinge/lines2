@@ -9,6 +9,7 @@ public class FieldLoader {
 	public Field getField(int rows, int cols) {
 		Field field = new Field(rows, cols);
 		field.setMoveStrategy(new SimpleMoveStrategy());
+		field.setEraseStrategy(new StraightEraseStrategy(4));
 
 		for (int i = 0; i < 8; i++) {
 			int row = rand.nextInt(field.getRows());

@@ -13,9 +13,8 @@ class Eraser {
 	private int lastStepRow, lastStepCol;
 
 	public Collection<Point> getErasedCells() {
-		if (cellExists(lastStepRow, lastStepCol) == false)
-			throw new IllegalArgumentException();
-		
+		verifyLastStepPoint();
+
 		Collection<Point> result = new ArrayList<Point>(2 * minEraseLineLength);
 
 		if (!isEmpty(lastStepRow, lastStepCol)) {
@@ -113,5 +112,10 @@ class Eraser {
 	public void setLastStepPoint(int row, int col) {
 		lastStepRow = row;
 		lastStepCol = col;
+	}
+
+	private void verifyLastStepPoint() {
+		if (cellExists(lastStepRow, lastStepCol) == false)
+			throw new IllegalArgumentException();
 	}
 }
