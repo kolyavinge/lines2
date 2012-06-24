@@ -18,11 +18,14 @@ import android.view.View;
 
 public class FieldView extends View {
 
+	private static final Paint whitePaint;
 	private static final Map<lines2.model.Color, Integer> ballColors;
 	private int cellSize;
 	private FieldPresenter presenter;
 
 	static {
+		whitePaint = new Paint();
+		whitePaint.setColor(Color.WHITE);
 		ballColors = new HashMap<lines2.model.Color, Integer>();
 		ballColors.put(lines2.model.Color.RED, android.graphics.Color.RED);
 		ballColors.put(lines2.model.Color.GREEN, android.graphics.Color.GREEN);
@@ -65,19 +68,29 @@ public class FieldView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		calculateCellSize(canvas);
-		measure(cellSize * presenter.getFieldCols(), cellSize * presenter.getFieldRows());
 		drawSelectedCell(canvas);
 		drawGrid(canvas);
 		drawCellBalls(canvas);
 	}
 
 	private void calculateCellSize(Canvas canvas) {
-		int cellSizeHeight = canvas.getHeight() / (presenter.getFieldRows() + 2);
-		int cellSizeWidth = canvas.getWidth() / presenter.getFieldCols() - 1;
+		if (cellSize > 0)
+			return;
+
+		Rect bounds = canvas.getClipBounds();
+
+		int width = bounds.right - bounds.left;
+		int height = bounds.bottom - bounds.top;
+
+		int cellSizeHeight = height / presenter.getFieldRows() - 1;
+		int cellSizeWidth = width / presenter.getFieldCols() - 1;
+
 		if (cellSizeHeight * presenter.getFieldCols() < canvas.getWidth())
 			cellSize = cellSizeHeight;
 		else
 			cellSize = cellSizeWidth;
+
+		measure(cellSize * presenter.getFieldCols(), cellSize * presenter.getFieldRows());
 	}
 
 	private void drawSelectedCell(Canvas canvas) {
@@ -104,32 +117,23 @@ public class FieldView extends View {
 	}
 
 	private void drawHorizontalLines(Canvas canvas) {
-		Paint paint = getWhitePaint();
 		for (int row = 0; row <= presenter.getFieldRows(); row++) {
 			float x0 = 0;
 			float y0 = row * cellSize;
 			float x1 = presenter.getFieldCols() * cellSize;
 			float y1 = y0;
-			canvas.drawLine(x0, y0, x1, y1, paint);
+			canvas.drawLine(x0, y0, x1, y1, whitePaint);
 		}
 	}
 
 	private void drawVerticalLines(Canvas canvas) {
-		Paint paint = getWhitePaint();
 		for (int col = 0; col <= presenter.getFieldCols(); col++) {
 			float x0 = col * cellSize;
 			float y0 = 0;
 			float x1 = x0;
 			float y1 = presenter.getFieldRows() * cellSize;
-			canvas.drawLine(x0, y0, x1, y1, paint);
+			canvas.drawLine(x0, y0, x1, y1, whitePaint);
 		}
-	}
-
-	private Paint getWhitePaint() {
-		Paint paint = new Paint();
-		paint.setColor(Color.WHITE);
-
-		return paint;
 	}
 
 	private void drawCellBalls(Canvas canvas) {
@@ -159,9 +163,10 @@ public class FieldView extends View {
 	}
 
 	private void drawColoredBall(Canvas canvas, ColoredBall ball) {
-		RectF rect = new RectF(0, 0, cellSize, cellSize);
+		RectF rect = new RectF(2, 2, cellSize - 2, cellSize - 2);
 		Paint paint = new Paint();
 		paint.setColor(getBallColor(ball.getColor()));
+		paint.setAntiAlias(true);
 		canvas.drawOval(rect, paint);
 	}
 

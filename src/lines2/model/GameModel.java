@@ -21,7 +21,7 @@ public final class GameModel {
 
 	private void initField() {
 		FieldLoader fieldLoader = new FieldLoader();
-		Field field = fieldLoader.getField(8, 7);
+		Field field = fieldLoader.getField(7, 6);
 		setField(field);
 	}
 

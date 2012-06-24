@@ -29,18 +29,19 @@ public class Lines2Activity extends Activity {
 
 		setContentView(mainView);
 
-		setScoresInTitleBar(0);
+		setScoresInTitleBar();
 	}
 
-	private void setScoresInTitleBar(int scores) {
-		String scoresString = Integer.toString(scores);
-		Lines2Activity.this.setTitle("Очки: " + scoresString);
+	private void setScoresInTitleBar() {
+		int current = gameModel.getScoresCounter().getCurrentScores();
+		int total = gameModel.getScoresCounter().getTotalLevelScores();
+		setTitle("Очки: " + Integer.toString(current) + " / " + Integer.toString(total));
 	}
 
 	private final DefaultScoresCounterListener scoresCounterListener = new DefaultScoresCounterListener() {
 		@Override
 		public void onScoreChanged(ScoresCounter scoresCounter) {
-			setScoresInTitleBar(scoresCounter.getCurrentScores());
+			setScoresInTitleBar();
 		}
 	};
 }
