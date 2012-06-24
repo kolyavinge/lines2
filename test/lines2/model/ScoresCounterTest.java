@@ -37,7 +37,7 @@ public class ScoresCounterTest extends TestCase {
 
 	public void testRaiseOnScoreComplete() {
 		TestScoreCounterListener listener = new TestScoreCounterListener();
-		scoreCounter.setListener(listener);
+		scoreCounter.addListener(listener);
 		scoreCounter.setEraseBallScore(1);
 		scoreCounter.setTotalLevelScores(5);
 
@@ -55,8 +55,11 @@ public class ScoresCounterTest extends TestCase {
 
 		private boolean onScoreCompleteCall = false;
 
-		public void onScoreComplete() {
+		public void onScoreComplete(ScoresCounter scoresCounter) {
 			onScoreCompleteCall = true;
+		}
+
+		public void onScoreChanged(ScoresCounter scoresCounter) {
 		}
 
 		public boolean isOnScoreCompleteCall() {

@@ -1,21 +1,65 @@
 package lines2.model;
 
-public final class GameModel implements ScoresCounterListener {
+import java.util.Collection;
+
+public final class GameModel {
 
 	private Field field;
 	private ScoresCounter scoresCounter;
+	private GameModelListener listener;
 
 	public GameModel() {
-		FieldLoader fieldLoader = new FieldLoader();
-		field = fieldLoader.getField(10, 8);
-		scoresCounter = new ScoresCounter();
-		scoresCounter.setListener(this);
+		initField();
+		initScoresCounter();
 	}
 
-	public void onScoreComplete() {
+	private void initScoresCounter() {
+		ScoresCounter scoresCounter = new ScoresCounter();
+		scoresCounter.setTotalLevelScores(2500);
+		setScoresCounter(scoresCounter);
+	}
+
+	private void initField() {
+		FieldLoader fieldLoader = new FieldLoader();
+		Field field = fieldLoader.getField(10, 8);
+		setField(field);
+	}
+
+	public void setListener(GameModelListener listener) {
+		this.listener = listener;
 	}
 
 	public Field getField() {
 		return field;
 	}
+
+	void setField(Field field) {
+		this.field = field;
+		this.field.addFieldListener(fieldListener);
+	}
+
+	public ScoresCounter getScoresCounter() {
+		return scoresCounter;
+	}
+
+	void setScoresCounter(ScoresCounter scoresCounter) {
+		this.scoresCounter = scoresCounter;
+		this.scoresCounter.addListener(scoresCounterListener);
+	}
+
+	private final FieldListener fieldListener = new FieldListener() {
+
+		public void onEraseCells(Collection<Cell> erasedCells) {
+			scoresCounter.addByErasedBalls(erasedCells.size());
+		}
+	};
+
+	private final ScoresCounterListener scoresCounterListener = new ScoresCounterListener() {
+
+		public void onScoreComplete(ScoresCounter scoresCounter) {
+		}
+
+		public void onScoreChanged(ScoresCounter scoresCounter) {
+		}
+	};
 }

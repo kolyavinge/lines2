@@ -1,20 +1,34 @@
 package lines2.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScoresCounter {
 
 	private int currentScores;
 	private int totalLevelScores;
 	private int eraseBallScore = 100;
-	private ScoresCounterListener listener;
+	private List<ScoresCounterListener> listeners;
+
+	public ScoresCounter() {
+		listeners = new ArrayList<ScoresCounterListener>();
+	}
 
 	public void addByErasedBalls(int ballsCount) {
 		currentScores += ballsCount * eraseBallScore;
-		raiseOnScoreComplete();
+		raiseOnScoreChanged();
+		if (scoreComplete())
+			raiseOnScoreComplete();
 	}
 
 	private void raiseOnScoreComplete() {
-		if (scoreComplete() && listener != null)
-			listener.onScoreComplete();
+		for (ScoresCounterListener listener : listeners)
+			listener.onScoreComplete(this);
+	}
+
+	private void raiseOnScoreChanged() {
+		for (ScoresCounterListener listener : listeners)
+			listener.onScoreChanged(this);
 	}
 
 	private boolean scoreComplete() {
@@ -48,10 +62,14 @@ public class ScoresCounter {
 		this.eraseBallScore = eraseBallScore;
 	}
 
-	public void setListener(ScoresCounterListener listener) {
-		this.listener = listener;
+	public void addListener(ScoresCounterListener listener) {
+		this.listeners.add(listener);
 	}
-	
+
+	public void removeListener(ScoresCounterListener listener) {
+		this.listeners.remove(listener);
+	}
+
 	private void validateByPositive(int value, String valueName) {
 		if (value <= 0)
 			throw new IllegalArgumentException(valueName + " must be greater that zero");

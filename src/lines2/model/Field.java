@@ -1,5 +1,6 @@
 package lines2.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import lines2.utils.IterableMatrix;
@@ -11,6 +12,7 @@ public class Field {
 	private MoveStrategy moveStrategy;
 	private EraseStrategy eraseStrategy;
 	private FillStrategy fillStrategy;
+	private Collection<FieldListener> fieldListeners = new ArrayList<FieldListener>();
 
 	public Field(int rows, int cols) {
 		this.rows = rows;
@@ -40,6 +42,14 @@ public class Field {
 
 	public void setFillStrategy(FillStrategy fillStrategy) {
 		this.fillStrategy = fillStrategy;
+	}
+
+	public void addFieldListener(FieldListener fieldListener) {
+		this.fieldListeners.add(fieldListener);
+	}
+	
+	public void removeFieldListener(FieldListener fieldListener) {
+		this.fieldListeners.remove(fieldListener);
 	}
 
 	public int getRows() {
@@ -98,8 +108,13 @@ public class Field {
 
 	private boolean eraseCells(Cell lastStepCell) {
 		Collection<Cell> erasedCells = eraseStrategy.getErasedCells(this, lastStepCell);
-		for (Cell cell : erasedCells)
-			cell.clear();
+		if (erasedCells.isEmpty() == false) {
+			for (Cell cell : erasedCells)
+				cell.clear();
+
+			for (FieldListener fieldListener : fieldListeners)
+				fieldListener.onEraseCells(erasedCells);
+		}
 
 		return !erasedCells.isEmpty();
 	}

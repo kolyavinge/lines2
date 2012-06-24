@@ -2,5 +2,7 @@ package lines2.model;
 
 public interface ScoresCounterListener {
 
-	void onScoreComplete();
+	void onScoreChanged(ScoresCounter scoresCounter);
+	
+	void onScoreComplete(ScoresCounter scoresCounter);
 }

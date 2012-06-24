@@ -20,7 +20,14 @@ public class Lines2Activity extends Activity {
 
 		FieldView fieldView = new FieldView(this);
 		fieldView.setPresenter(fieldPresenter);
+		
+		ScoresView scoresView = new ScoresView(this);
+		scoresView.setScoresCounter(gameModel.getScoresCounter());
 
-		setContentView(fieldView);
+		MainView mainView = new MainView(this);
+		mainView.setFieldView(fieldView);
+		mainView.setScoresView(scoresView);
+
+		setContentView(mainView);
 	}
 }

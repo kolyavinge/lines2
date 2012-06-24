@@ -18,7 +18,6 @@ import android.view.View;
 
 public class FieldView extends View {
 
-	//	private static final int offsetX = 10, offsetY = 20;
 	private static final Map<lines2.model.Color, Integer> ballColors;
 	private int cellSize = 40;
 	private FieldPresenter presenter;
@@ -60,14 +59,9 @@ public class FieldView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		canvas.save();
-		//		canvas.translate(offsetX, offsetY);
-
 		drawSelectedCell(canvas);
 		drawGrid(canvas);
 		drawCellBalls(canvas);
-
-		canvas.restore();
 	}
 
 	private void drawSelectedCell(Canvas canvas) {
