@@ -15,13 +15,13 @@ public final class GameModel {
 
 	private void initScoresCounter() {
 		ScoresCounter scoresCounter = new ScoresCounter();
-		scoresCounter.setTotalLevelScores(2500);
+		scoresCounter.setTotalLevelScores(25000);
 		setScoresCounter(scoresCounter);
 	}
 
 	private void initField() {
 		FieldLoader fieldLoader = new FieldLoader();
-		Field field = fieldLoader.getField(10, 8);
+		Field field = fieldLoader.getField(8, 7);
 		setField(field);
 	}
 

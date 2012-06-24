@@ -15,17 +15,24 @@ public class ScoresView extends View {
 
 	public ScoresView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		initSize();
 		paintInit();
 	}
 
 	public ScoresView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		initSize();
 		paintInit();
 	}
 
 	public ScoresView(Context context) {
 		super(context);
+		initSize();
 		paintInit();
+	}
+
+	private void initSize() {
+		measure(400, 20);
 	}
 
 	private void paintInit() {
@@ -40,6 +47,11 @@ public class ScoresView extends View {
 
 	public void setScoresCounter(ScoresCounter scoresCounter) {
 		this.scoresCounter = scoresCounter;
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
 	}
 
 	@Override

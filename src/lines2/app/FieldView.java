@@ -19,7 +19,7 @@ import android.view.View;
 public class FieldView extends View {
 
 	private static final Map<lines2.model.Color, Integer> ballColors;
-	private int cellSize = 40;
+	private int cellSize;
 	private FieldPresenter presenter;
 
 	static {
@@ -58,10 +58,26 @@ public class FieldView extends View {
 	}
 
 	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		this.setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+	}
+
+	@Override
 	protected void onDraw(Canvas canvas) {
+		calculateCellSize(canvas);
+		measure(cellSize * presenter.getFieldCols(), cellSize * presenter.getFieldRows());
 		drawSelectedCell(canvas);
 		drawGrid(canvas);
 		drawCellBalls(canvas);
+	}
+
+	private void calculateCellSize(Canvas canvas) {
+		int cellSizeHeight = canvas.getHeight() / (presenter.getFieldRows() + 2);
+		int cellSizeWidth = canvas.getWidth() / presenter.getFieldCols() - 1;
+		if (cellSizeHeight * presenter.getFieldCols() < canvas.getWidth())
+			cellSize = cellSizeHeight;
+		else
+			cellSize = cellSizeWidth;
 	}
 
 	private void drawSelectedCell(Canvas canvas) {

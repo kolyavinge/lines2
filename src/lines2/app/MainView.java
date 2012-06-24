@@ -1,7 +1,5 @@
 package lines2.app;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -9,8 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public class MainView extends View {
-
-	private static final int offsetX = 10, offsetY = 10;
 
 	private View fieldView;
 	private View scoresView;
@@ -29,9 +25,6 @@ public class MainView extends View {
 
 	public void setFieldView(View fieldView) {
 		this.fieldView = fieldView;
-//		ArrayList<View> array = new ArrayList<View>();
-//		array.add(fieldView);
-//		this.addTouchables(array);
 	}
 
 	public void setScoresView(View scoresView) {
@@ -41,15 +34,12 @@ public class MainView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		canvas.save();
-		canvas.translate(offsetX, offsetY);
+		canvas.translate(0, 4);
 
-		canvas.save();
-		canvas.translate(0, 20);
-		scoresView.draw(canvas);
-		canvas.restore();
-
-		canvas.translate(0, 25);
 		fieldView.draw(canvas);
+
+		canvas.translate(0, fieldView.getMeasuredHeight() + scoresView.getMeasuredHeight());
+		scoresView.draw(canvas);
 
 		canvas.restore();
 	}
