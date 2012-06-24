@@ -9,7 +9,6 @@ import android.view.View;
 public class MainView extends View {
 
 	private View fieldView;
-	private View scoresView;
 
 	public MainView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -27,20 +26,11 @@ public class MainView extends View {
 		this.fieldView = fieldView;
 	}
 
-	public void setScoresView(View scoresView) {
-		this.scoresView = scoresView;
-	}
-
 	@Override
 	protected void onDraw(Canvas canvas) {
 		canvas.save();
 		canvas.translate(0, 4);
-
 		fieldView.draw(canvas);
-
-		canvas.translate(0, fieldView.getMeasuredHeight() + scoresView.getMeasuredHeight());
-		scoresView.draw(canvas);
-
 		canvas.restore();
 	}
 
