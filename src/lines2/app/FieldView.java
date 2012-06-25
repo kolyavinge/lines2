@@ -1,17 +1,14 @@
 package lines2.app;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import lines2.model.Ball;
 import lines2.model.Cell;
-import lines2.model.ColoredBall;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,17 +16,13 @@ import android.view.View;
 public class FieldView extends View {
 
 	private static final Paint whitePaint;
-	private static final Map<lines2.model.Color, Integer> ballColors;
 	private int cellSize;
 	private FieldPresenter presenter;
+	private BallRenderer ballRenderer = new BallRenderer();
 
 	static {
 		whitePaint = new Paint();
 		whitePaint.setColor(Color.WHITE);
-		ballColors = new HashMap<lines2.model.Color, Integer>();
-		ballColors.put(lines2.model.Color.RED, android.graphics.Color.RED);
-		ballColors.put(lines2.model.Color.GREEN, android.graphics.Color.GREEN);
-		ballColors.put(lines2.model.Color.BLUE, android.graphics.Color.BLUE);
 	}
 
 	public FieldView(Context context, AttributeSet attrs, int defStyle) {
@@ -42,14 +35,6 @@ public class FieldView extends View {
 
 	public FieldView(Context context) {
 		super(context);
-	}
-
-	public int getCellSize() {
-		return cellSize;
-	}
-
-	public void setCellSize(int cellSize) {
-		this.cellSize = cellSize;
 	}
 
 	public FieldPresenter getPresenter() {
@@ -70,7 +55,8 @@ public class FieldView extends View {
 		calculateCellSize(canvas);
 		drawSelectedCell(canvas);
 		drawGrid(canvas);
-		drawCellBalls(canvas);
+		drawBalls(canvas);
+		drawNextBalls(canvas);
 	}
 
 	private void calculateCellSize(Canvas canvas) {
@@ -85,7 +71,7 @@ public class FieldView extends View {
 		int cellSizeHeight = height / presenter.getFieldRows() - 1;
 		int cellSizeWidth = width / presenter.getFieldCols() - 1;
 
-		if (cellSizeHeight * presenter.getFieldCols() < canvas.getWidth())
+		if (cellSizeHeight * presenter.getFieldCols() < width)
 			cellSize = cellSizeHeight;
 		else
 			cellSize = cellSizeWidth;
@@ -136,45 +122,32 @@ public class FieldView extends View {
 		}
 	}
 
-	private void drawCellBalls(Canvas canvas) {
+	private void drawBalls(Canvas canvas) {
+		ballRenderer.setCellSize(cellSize);
+		ballRenderer.setNextBall(false);
+		ballRenderer.setCanvas(canvas);
 		for (Cell cell : presenter.getFieldCells()) {
-			drawCellBall(canvas, cell);
+			if (cell.isEmpty() == false) {
+				canvas.save();
+				canvas.translate(cellSize * cell.getCol(), cellSize * cell.getRow());
+				ballRenderer.drawBall(cell.getBall());
+				canvas.restore();
+			}
 		}
 	}
 
-	private void drawCellBall(Canvas canvas, Cell cell) {
-		if (cell.isEmpty())
-			return;
-
-		canvas.save();
-		canvas.translate(cellSize * cell.getCol(), cellSize * cell.getRow());
-		drawBall(canvas, cell.getBall());
-		canvas.restore();
-	}
-
-	private void drawBall(Canvas canvas, Ball ball) {
-		switch (ball.getType()) {
-		case COLORED_BALL:
-			drawColoredBall(canvas, (ColoredBall) ball);
-			break;
-		default:
-			throw new IllegalArgumentException();
+	private void drawNextBalls(Canvas canvas) {
+		ballRenderer.setCellSize(cellSize);
+		ballRenderer.setNextBall(true);
+		ballRenderer.setCanvas(canvas);
+		for (Map.Entry<Cell, Ball> kv : presenter.getNextFillCells().entrySet()) {
+			Cell cell = kv.getKey();
+			Ball ball = kv.getValue();
+			canvas.save();
+			canvas.translate(cellSize * cell.getCol(), cellSize * cell.getRow());
+			ballRenderer.drawBall(ball);
+			canvas.restore();
 		}
-	}
-
-	private void drawColoredBall(Canvas canvas, ColoredBall ball) {
-		RectF rect = new RectF(2, 2, cellSize - 2, cellSize - 2);
-		Paint paint = new Paint();
-		paint.setColor(getBallColor(ball.getColor()));
-		paint.setAntiAlias(true);
-		canvas.drawOval(rect, paint);
-	}
-
-	private int getBallColor(lines2.model.Color color) {
-		if (ballColors.containsKey(color) == false)
-			throw new IllegalArgumentException();
-
-		return ballColors.get(color);
 	}
 
 	@Override

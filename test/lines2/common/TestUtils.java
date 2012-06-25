@@ -2,6 +2,7 @@ package lines2.common;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import lines2.model.Ball;
 import lines2.model.BallType;
@@ -45,7 +46,8 @@ public final class TestUtils {
 	
 	public static FillStrategy getFillStrategyStub() {
 		return new FillStrategy() {
-			public void fill(Field field) {
+			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
+				return Collections.emptyMap();
 			}
 		};
 	}

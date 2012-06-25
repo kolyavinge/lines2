@@ -1,6 +1,8 @@
 package lines2.model;
 
+import java.util.*;
+
 public interface FillStrategy {
 
-	void fill(Field field);
+	Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells);
 }

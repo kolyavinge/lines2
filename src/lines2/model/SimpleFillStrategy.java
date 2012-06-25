@@ -1,7 +1,6 @@
 package lines2.model;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 class SimpleFillStrategy implements FillStrategy {
 
@@ -19,25 +18,20 @@ class SimpleFillStrategy implements FillStrategy {
 		this.right = right;
 	}
 
-	public void fill(Field field) {
+	public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
+		Map<Cell, Ball> nextCells = new HashMap<Cell, Ball>();
+
+		ArrayList<Cell> emptyCells = getEmptyCells(cells);
 		int cellsToFillCount = left + rand.nextInt(right - left + 1);
 
-		if (cellsToFillCount > getEmptyCellsCount(field))
-			throw new FieldOverflowException();
-
-		for (int i = 0; i < cellsToFillCount; i++) {
+		for (int i = 0; i < cellsToFillCount && !emptyCells.isEmpty(); i++) {
+			Cell cell = getRandomEmptyCell(emptyCells);
+			emptyCells.remove(cell);
 			Ball ball = getRandomBall();
-			Cell cell = getRandomCell(field);
-			cell.setBall(ball);
+			nextCells.put(cell, ball);
 		}
-	}
 
-	private Cell getRandomCell(Field field) {
-		ArrayList<Cell> emptyCells = getEmptyCells(field);
-		int cellIndex = rand.nextInt(emptyCells.size());
-		Cell cell = emptyCells.get(cellIndex);
-
-		return cell;
+		return nextCells;
 	}
 
 	private Ball getRandomBall() {
@@ -47,21 +41,19 @@ class SimpleFillStrategy implements FillStrategy {
 		return new ColoredBall(color);
 	}
 
-	private ArrayList<Cell> getEmptyCells(Field field) {
+	private Cell getRandomEmptyCell(List<Cell> emptyCells) {
+		int cellIndex = rand.nextInt(emptyCells.size());
+		Cell cell = emptyCells.get(cellIndex);
+
+		return cell;
+	}
+
+	private ArrayList<Cell> getEmptyCells(Iterable<Cell> cells) {
 		ArrayList<Cell> result = new ArrayList<Cell>();
-		for (Cell c : field.getCells())
+		for (Cell c : cells)
 			if (c.isEmpty())
 				result.add(c);
 
 		return result;
-	}
-
-	private int getEmptyCellsCount(Field field) {
-		int count = 0;
-		for (Cell c : field.getCells())
-			if (c.isEmpty())
-				count++;
-
-		return count;
 	}
 }

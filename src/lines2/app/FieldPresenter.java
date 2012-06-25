@@ -1,5 +1,8 @@
 package lines2.app;
 
+import java.util.Map;
+
+import lines2.model.Ball;
 import lines2.model.Cell;
 import lines2.model.Field;
 
@@ -22,6 +25,10 @@ public class FieldPresenter {
 
 	public int getFieldCols() {
 		return field.getCols();
+	}
+	
+	public Map<Cell, Ball> getNextFillCells() {
+		return field.getNextFillCells();
 	}
 
 	public void selectCell(int row, int col) {

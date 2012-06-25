@@ -1,8 +1,6 @@
 package lines2.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import java.util.*;
 import lines2.utils.IterableMatrix;
 
 public class Field {
@@ -12,6 +10,7 @@ public class Field {
 	private MoveStrategy moveStrategy;
 	private EraseStrategy eraseStrategy;
 	private FillStrategy fillStrategy;
+	private Map<Cell, Ball> nextFillCells = Collections.emptyMap();
 	private Collection<FieldListener> fieldListeners = new ArrayList<FieldListener>();
 
 	public Field(int rows, int cols) {
@@ -42,12 +41,17 @@ public class Field {
 
 	public void setFillStrategy(FillStrategy fillStrategy) {
 		this.fillStrategy = fillStrategy;
+		generateNextFillCells();
+	}
+
+	public Map<Cell, Ball> getNextFillCells() {
+		return nextFillCells;
 	}
 
 	public void addFieldListener(FieldListener fieldListener) {
 		this.fieldListeners.add(fieldListener);
 	}
-	
+
 	public void removeFieldListener(FieldListener fieldListener) {
 		this.fieldListeners.remove(fieldListener);
 	}
@@ -76,13 +80,25 @@ public class Field {
 		verifyMoveBallArgs(from, to);
 		if (checkMove(from, to)) {
 			swapBalls(from, to);
-			if (eraseCells(to) == false)
-				fill();
+			if (eraseCells(to) == false) {
+				fillCells();
+				generateNextFillCells();
+			}
 		}
 	}
 
-	private void fill() {
-		fillStrategy.fill(this);
+	private void generateNextFillCells() {
+		nextFillCells = fillStrategy.getNextFillCells(getCells());
+	}
+
+	private void fillCells() {
+		for (Map.Entry<Cell, Ball> kv : nextFillCells.entrySet()) {
+			Cell cell = kv.getKey();
+			if (cell.isEmpty()) {
+				Ball ball = kv.getValue();
+				cell.setBall(ball);
+			}
+		}
 	}
 
 	private boolean checkMove(Cell from, Cell to) {
