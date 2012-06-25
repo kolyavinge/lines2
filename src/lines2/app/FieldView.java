@@ -15,15 +15,8 @@ import android.view.View;
 
 public class FieldView extends View {
 
-	private static final Paint whitePaint;
 	private int cellSize;
 	private FieldPresenter presenter;
-	private BallRenderer ballRenderer = new BallRenderer();
-
-	static {
-		whitePaint = new Paint();
-		whitePaint.setColor(Color.WHITE);
-	}
 
 	public FieldView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -98,55 +91,36 @@ public class FieldView extends View {
 	}
 
 	private void drawGrid(Canvas canvas) {
-		drawHorizontalLines(canvas);
-		drawVerticalLines(canvas);
-	}
-
-	private void drawHorizontalLines(Canvas canvas) {
-		for (int row = 0; row <= presenter.getFieldRows(); row++) {
-			float x0 = 0;
-			float y0 = row * cellSize;
-			float x1 = presenter.getFieldCols() * cellSize;
-			float y1 = y0;
-			canvas.drawLine(x0, y0, x1, y1, whitePaint);
-		}
-	}
-
-	private void drawVerticalLines(Canvas canvas) {
-		for (int col = 0; col <= presenter.getFieldCols(); col++) {
-			float x0 = col * cellSize;
-			float y0 = 0;
-			float x1 = x0;
-			float y1 = presenter.getFieldRows() * cellSize;
-			canvas.drawLine(x0, y0, x1, y1, whitePaint);
-		}
+		GridRenderer gridRenderer = new GridRenderer();
+		gridRenderer.setCanvas(canvas);
+		gridRenderer.setCellSize(cellSize);
+		gridRenderer.setFieldSize(presenter.getFieldRows(), presenter.getFieldCols());
+		gridRenderer.drawGrid();
 	}
 
 	private void drawBalls(Canvas canvas) {
+		BallRenderer ballRenderer = new BallRenderer();
 		ballRenderer.setCellSize(cellSize);
 		ballRenderer.setNextBall(false);
 		ballRenderer.setCanvas(canvas);
 		for (Cell cell : presenter.getFieldCells()) {
 			if (cell.isEmpty() == false) {
-				canvas.save();
-				canvas.translate(cellSize * cell.getCol(), cellSize * cell.getRow());
+				ballRenderer.setBallPosition(cellSize * cell.getCol(), cellSize * cell.getRow());
 				ballRenderer.drawBall(cell.getBall());
-				canvas.restore();
 			}
 		}
 	}
 
 	private void drawNextBalls(Canvas canvas) {
+		BallRenderer ballRenderer = new BallRenderer();
 		ballRenderer.setCellSize(cellSize);
 		ballRenderer.setNextBall(true);
 		ballRenderer.setCanvas(canvas);
 		for (Map.Entry<Cell, Ball> kv : presenter.getNextFillCells().entrySet()) {
 			Cell cell = kv.getKey();
 			Ball ball = kv.getValue();
-			canvas.save();
-			canvas.translate(cellSize * cell.getCol(), cellSize * cell.getRow());
+			ballRenderer.setBallPosition(cellSize * cell.getCol(), cellSize * cell.getRow());
 			ballRenderer.drawBall(ball);
-			canvas.restore();
 		}
 	}
 

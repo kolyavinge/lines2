@@ -17,6 +17,7 @@ class BallRenderer {
 	private Canvas canvas;
 	private boolean isNextBall;
 	private int cellSize;
+	private int ballX, ballY;
 
 	static {
 		ballColors = new HashMap<lines2.model.Color, Integer>();
@@ -25,31 +26,26 @@ class BallRenderer {
 		ballColors.put(lines2.model.Color.BLUE, android.graphics.Color.BLUE);
 	}
 
-	public Canvas getCanvas() {
-		return canvas;
-	}
-
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
-	}
-
-	public boolean isNextBall() {
-		return isNextBall;
 	}
 
 	public void setNextBall(boolean isNextBall) {
 		this.isNextBall = isNextBall;
 	}
 
-	public int getCellSize() {
-		return cellSize;
-	}
-
 	public void setCellSize(int cellSize) {
 		this.cellSize = cellSize;
 	}
-	
+
+	public void setBallPosition(int x, int y) {
+		ballX = x;
+		ballY = y;
+	}
+
 	public void drawBall(Ball ball) {
+		canvas.save();
+		canvas.translate(ballX, ballY);
 		switch (ball.getType()) {
 		case COLORED_BALL:
 			drawColoredBall((ColoredBall) ball);
@@ -57,6 +53,7 @@ class BallRenderer {
 		default:
 			throw new IllegalArgumentException();
 		}
+		canvas.restore();
 	}
 
 	public void drawColoredBall(ColoredBall ball) {
