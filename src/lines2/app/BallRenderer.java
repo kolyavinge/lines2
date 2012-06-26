@@ -13,6 +13,7 @@ class BallRenderer {
 
 	private static final Map<lines2.model.Color, Integer> ballColors;
 	private static final int ballOffset = 2;
+	private static final int nextBallAlpha = 150;
 
 	private Canvas canvas;
 	private boolean isNextBall;
@@ -57,7 +58,7 @@ class BallRenderer {
 	}
 
 	public void drawColoredBall(ColoredBall ball) {
-		RectF rect = new RectF(ballOffset, ballOffset, cellSize - ballOffset, cellSize - ballOffset);
+		RectF rect = isNextBall ? getRectForNextBall(ball) : getRectForBall(ball);
 		Paint paint = isNextBall ? getPaintForNextColoredBall(ball) : getPaintForColoredBall(ball);
 		canvas.drawOval(rect, paint);
 	}
@@ -71,7 +72,7 @@ class BallRenderer {
 
 	private Paint getPaintForNextColoredBall(ColoredBall ball) {
 		Paint paint = getPaintForColoredBall(ball);
-		paint.setAlpha(100);
+		paint.setAlpha(nextBallAlpha);
 
 		return paint;
 	}
@@ -81,6 +82,15 @@ class BallRenderer {
 		paint.setAntiAlias(true);
 
 		return paint;
+	}
+
+	private RectF getRectForBall(Ball ball) {
+		return new RectF(ballOffset, ballOffset, cellSize - ballOffset, cellSize - ballOffset);
+	}
+
+	private RectF getRectForNextBall(Ball ball) {
+		final float z = 6.0f;
+		return new RectF(z * ballOffset, z * ballOffset, cellSize - z * ballOffset, cellSize - z * ballOffset);
 	}
 
 	private int getBallColor(lines2.model.Color color) {
