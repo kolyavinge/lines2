@@ -13,7 +13,7 @@ public class FieldLoader {
 		fillStrategy.setFillRange(3, 4);
 		field.setFillStrategy(fillStrategy);
 
-		field.fillSomeCells();
+		field.populate();
 
 		return field;
 	}

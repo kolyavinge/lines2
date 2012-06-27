@@ -78,21 +78,27 @@ public class Field {
 
 	public void moveBall(Cell from, Cell to) {
 		verifyMoveBallArgs(from, to);
-		if (checkMove(from, to)) {
-			swapCells(from, to);
-			if (eraseCells(to)) {
-				if (isEmpty())
-					fillSomeCells();
-			} else {
-				fillNextCells();
-				generateNextFillCells();
-			}
+		if (checkMove(from, to) == false)
+			return;
+
+		swapCells(from, to);
+		if (eraseCells(to) == false) {
+			fillNextCells();
+			generateNextFillCells();
 		}
+		// после стирания шаров поле может оказаться пустым
+		// в этом случае заполняем его
+		if (isEmpty())
+			populate();
 	}
 
-	void fillSomeCells() {
+	void populate() {
+		if (nextFillCells.isEmpty())
+			generateNextFillCells();
+
 		fillNextCells();
 		generateNextFillCells();
+
 		fillNextCells();
 		generateNextFillCells();
 	}
@@ -108,9 +114,7 @@ public class Field {
 				Ball ball = kv.getValue();
 				cell.setBall(ball);
 				// если после появления шарика образуется линия, то ее нужно стереть
-				// и если после этого поле пустое - заполняем его шариками
-				if (eraseCells(cell) && isEmpty())
-					fillSomeCells();
+				eraseCells(cell);
 			}
 		}
 	}
@@ -138,15 +142,20 @@ public class Field {
 
 	private boolean eraseCells(Cell lastStepCell) {
 		Collection<Cell> erasedCells = eraseStrategy.getErasedCells(this, lastStepCell);
-		if (erasedCells.isEmpty() == false) {
-			for (Cell cell : erasedCells)
-				cell.clear();
+		if (erasedCells.isEmpty())
+			return false;
 
-			for (FieldListener fieldListener : fieldListeners)
-				fieldListener.onEraseCells(erasedCells);
-		}
+		for (Cell cell : erasedCells)
+			cell.clear();
 
-		return !erasedCells.isEmpty();
+		raiseOnEraseCells(erasedCells);
+
+		return true;
+	}
+
+	private void raiseOnEraseCells(Collection<Cell> erasedCells) {
+		for (FieldListener fieldListener : fieldListeners)
+			fieldListener.onEraseCells(erasedCells);
 	}
 
 	private void initCells() {
