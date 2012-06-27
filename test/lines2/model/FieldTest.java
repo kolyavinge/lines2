@@ -117,7 +117,7 @@ public class FieldTest extends TestCase {
 
 		field.moveBall(field.getCell(0, 4), field.getCell(0, 3));
 
-		assertTrue(field.getCell(0, 0).isEmpty());
+		assertFalse(field.getCell(0, 0).isEmpty());
 		assertTrue(field.getCell(0, 1).isEmpty());
 		assertTrue(field.getCell(0, 2).isEmpty());
 		assertTrue(field.getCell(0, 3).isEmpty());
@@ -132,7 +132,6 @@ public class FieldTest extends TestCase {
 				return result;
 			}
 		};
-
 		field.setFillStrategy(fillStrategy);
 
 		Ball ball = TestUtils.getColoredBall(RED);
@@ -142,5 +141,25 @@ public class FieldTest extends TestCase {
 
 		assertFalse(field.getCell(0, 0).isEmpty());
 		assertSame(field.getCell(0, 0).getBall(), ball);
+	}
+	
+	public void testFillAfterTotalErase() {
+		field.setEraseStrategy(new StraightEraseStrategy(2));
+		
+		FillStrategy fillStrategy = new FillStrategy() {
+			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
+				Map<Cell, Ball> result = new HashMap<Cell, Ball>();
+				result.put(field.getCell(0, 0), TestUtils.getColoredBall(RED));
+
+				return result;
+			}
+		};
+		field.setFillStrategy(fillStrategy);
+		
+		field.getCell(0, 0).setBall(TestUtils.getColoredBall(RED));
+		field.getCell(0, 2).setBall(TestUtils.getColoredBall(RED));
+		field.moveBall(field.getCell(0, 2), field.getCell(0, 1));
+		
+		assertFalse(field.getCell(0, 0).isEmpty());
 	}
 }

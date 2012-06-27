@@ -14,9 +14,13 @@ public class Field {
 	private Collection<FieldListener> fieldListeners = new ArrayList<FieldListener>();
 
 	public Field(int rows, int cols) {
+		setSize(rows, cols);
+		initCells();
+	}
+
+	private void setSize(int rows, int cols) {
 		this.rows = rows;
 		this.cols = cols;
-		initCells();
 	}
 
 	public MoveStrategy getMoveStrategy() {
@@ -44,16 +48,12 @@ public class Field {
 		generateNextFillCells();
 	}
 
+	public boolean isEmpty() {
+		return getEmptyCellsCount() == (rows * cols);
+	}
+
 	public Map<Cell, Ball> getNextFillCells() {
 		return nextFillCells;
-	}
-
-	public void addFieldListener(FieldListener fieldListener) {
-		this.fieldListeners.add(fieldListener);
-	}
-
-	public void removeFieldListener(FieldListener fieldListener) {
-		this.fieldListeners.remove(fieldListener);
 	}
 
 	public int getRows() {
@@ -80,32 +80,37 @@ public class Field {
 		verifyMoveBallArgs(from, to);
 		if (checkMove(from, to)) {
 			swapCells(from, to);
-			if (eraseCells(to) == false) {
-				fillCells();
+			if (eraseCells(to)) {
+				if (isEmpty())
+					fillSomeCells();
+			} else {
+				fillNextCells();
 				generateNextFillCells();
 			}
 		}
 	}
-	
-    void startFillCells() {
-    	fillCells();
-    	generateNextFillCells();
-    	fillCells();
-    	generateNextFillCells();
+
+	void fillSomeCells() {
+		fillNextCells();
+		generateNextFillCells();
+		fillNextCells();
+		generateNextFillCells();
 	}
 
 	private void generateNextFillCells() {
 		nextFillCells = fillStrategy.getNextFillCells(getCells());
 	}
 
-	private void fillCells() {
+	private void fillNextCells() {
 		for (Map.Entry<Cell, Ball> kv : nextFillCells.entrySet()) {
 			Cell cell = kv.getKey();
 			if (cell.isEmpty()) {
 				Ball ball = kv.getValue();
 				cell.setBall(ball);
 				// если после появления шарика образуется линия, то ее нужно стереть
-				eraseCells(cell);
+				// и если после этого поле пустое - заполняем его шариками
+				if (eraseCells(cell) && isEmpty())
+					fillSomeCells();
 			}
 		}
 	}
@@ -143,11 +148,28 @@ public class Field {
 
 		return !erasedCells.isEmpty();
 	}
-	
+
 	private void initCells() {
 		cells = new Cell[rows][cols];
 		for (int r = 0; r < rows; r++)
 			for (int c = 0; c < cols; c++)
 				cells[r][c] = new Cell(r, c);
+	}
+
+	private int getEmptyCellsCount() {
+		int count = 0;
+		for (Cell c : getCells())
+			if (c.isEmpty())
+				count++;
+
+		return count;
+	}
+
+	public void addFieldListener(FieldListener fieldListener) {
+		this.fieldListeners.add(fieldListener);
+	}
+
+	public void removeFieldListener(FieldListener fieldListener) {
+		this.fieldListeners.remove(fieldListener);
 	}
 }
