@@ -1,7 +1,11 @@
 package lines2.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 import lines2.common.TestUtils;
+import static lines2.model.Color.*;
 
 public class FieldTest extends TestCase {
 
@@ -92,5 +96,30 @@ public class FieldTest extends TestCase {
 		assertFalse(field.cellExists(0, -1));
 		assertTrue(field.cellExists(rows - 1, cols - 1));
 		assertFalse(field.cellExists(rows, cols));
+	}
+
+	public void testEraseAfterFill() {
+		field.setEraseStrategy(new StraightEraseStrategy(4));
+
+		FillStrategy fillStrategy = new FillStrategy() {
+			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
+				Map<Cell, Ball> result = new HashMap<Cell, Ball>();
+				result.put(field.getCell(0, 0), TestUtils.getColoredBall(RED));
+
+				return result;
+			}
+		};
+
+		field.getCell(0, 1).setBall(TestUtils.getColoredBall(RED));
+		field.getCell(0, 2).setBall(TestUtils.getColoredBall(RED));
+		field.setFillStrategy(fillStrategy);
+		field.getCell(0, 4).setBall(TestUtils.getColoredBall(RED));
+
+		field.moveBall(field.getCell(0, 4), field.getCell(0, 3));
+
+		assertTrue(field.getCell(0, 0).isEmpty());
+		assertTrue(field.getCell(0, 1).isEmpty());
+		assertTrue(field.getCell(0, 2).isEmpty());
+		assertTrue(field.getCell(0, 3).isEmpty());
 	}
 }

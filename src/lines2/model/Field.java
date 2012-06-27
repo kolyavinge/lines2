@@ -79,7 +79,7 @@ public class Field {
 	public void moveBall(Cell from, Cell to) {
 		verifyMoveBallArgs(from, to);
 		if (checkMove(from, to)) {
-			swapBalls(from, to);
+			swapCells(from, to);
 			if (eraseCells(to) == false) {
 				fillCells();
 				generateNextFillCells();
@@ -91,6 +91,7 @@ public class Field {
     	fillCells();
     	generateNextFillCells();
     	fillCells();
+    	generateNextFillCells();
 	}
 
 	private void generateNextFillCells() {
@@ -103,6 +104,8 @@ public class Field {
 			if (cell.isEmpty()) {
 				Ball ball = kv.getValue();
 				cell.setBall(ball);
+				// если после появления шарика образуется линия, то ее нужно стереть
+				eraseCells(cell);
 			}
 		}
 	}
@@ -122,7 +125,7 @@ public class Field {
 			throw new IllegalArgumentException();
 	}
 
-	private void swapBalls(Cell from, Cell to) {
+	private void swapCells(Cell from, Cell to) {
 		Ball ball = from.getBall();
 		from.clear();
 		to.setBall(ball);
