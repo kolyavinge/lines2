@@ -29,7 +29,7 @@ public class MainView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		canvas.save();
-		canvas.translate(0, 4);
+		canvas.translate(0, 2);
 		fieldView.draw(canvas);
 		canvas.restore();
 	}
