@@ -9,13 +9,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class FieldView extends View {
 
-	private int cellSize;
+	private float cellSize;
 	private FieldPresenter presenter;
 
 	public FieldView(Context context, AttributeSet attrs, int defStyle) {
@@ -58,32 +59,32 @@ public class FieldView extends View {
 
 		Rect bounds = canvas.getClipBounds();
 
-		int width = bounds.right - bounds.left;
-		int height = bounds.bottom - bounds.top;
+		float width = bounds.right - bounds.left;
+		float height = bounds.bottom - bounds.top;
 
-		int cellSizeHeight = height / presenter.getFieldRows() - 1;
-		int cellSizeWidth = width / presenter.getFieldCols() - 1;
+		float cellSizeHeight = height / presenter.getFieldRows() - 0.1f;
+		float cellSizeWidth = width / presenter.getFieldCols() - 0.1f;
 
 		if (cellSizeHeight * presenter.getFieldCols() < width)
 			cellSize = cellSizeHeight;
 		else
 			cellSize = cellSizeWidth;
 
-		measure(cellSize * presenter.getFieldCols(), cellSize * presenter.getFieldRows());
+		measure((int)cellSize * presenter.getFieldCols(), (int)cellSize * presenter.getFieldRows());
 	}
 
 	private void drawSelectedCell(Canvas canvas) {
 		if (presenter.noSelectedCell())
 			return;
 
-		Rect rect = getRectForCell(presenter.getSelectedCell());
+		RectF rect = getRectForCell(presenter.getSelectedCell());
 		Paint paint = new Paint();
 		paint.setColor(Color.YELLOW);
 		canvas.drawRect(rect, paint);
 	}
 
-	private Rect getRectForCell(Cell cell) {
-		return new Rect(
+	private RectF getRectForCell(Cell cell) {
+		return new RectF(
 				cell.getCol() * cellSize,
 				cell.getRow() * cellSize,
 				cell.getCol() * cellSize + cellSize,

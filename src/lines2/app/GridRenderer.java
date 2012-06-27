@@ -8,7 +8,7 @@ public class GridRenderer {
 
 	private static final Paint whitePaint;
 	private Canvas canvas;
-	private int cellSize;
+	private float cellSize;
 	private int fieldRows, fieldCols;
 
 	static {
@@ -20,7 +20,7 @@ public class GridRenderer {
 		this.canvas = canvas;
 	}
 
-	public void setCellSize(int cellSize) {
+	public void setCellSize(float cellSize) {
 		this.cellSize = cellSize;
 	}
 

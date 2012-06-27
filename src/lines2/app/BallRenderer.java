@@ -17,8 +17,8 @@ class BallRenderer {
 
 	private Canvas canvas;
 	private boolean isNextBall;
-	private int cellSize;
-	private int ballX, ballY;
+	private float cellSize;
+	private float ballX, ballY;
 
 	static {
 		ballColors = new HashMap<lines2.model.Color, Integer>();
@@ -35,11 +35,11 @@ class BallRenderer {
 		this.isNextBall = isNextBall;
 	}
 
-	public void setCellSize(int cellSize) {
+	public void setCellSize(float cellSize) {
 		this.cellSize = cellSize;
 	}
 
-	public void setBallPosition(int x, int y) {
+	public void setBallPosition(float x, float y) {
 		ballX = x;
 		ballY = y;
 	}
