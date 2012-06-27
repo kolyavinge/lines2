@@ -86,6 +86,12 @@ public class Field {
 			}
 		}
 	}
+	
+    void startFillCells() {
+    	fillCells();
+    	generateNextFillCells();
+    	fillCells();
+	}
 
 	private void generateNextFillCells() {
 		nextFillCells = fillStrategy.getNextFillCells(getCells());
@@ -134,7 +140,7 @@ public class Field {
 
 		return !erasedCells.isEmpty();
 	}
-
+	
 	private void initCells() {
 		cells = new Cell[rows][cols];
 		for (int r = 0; r < rows; r++)
