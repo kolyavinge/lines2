@@ -7,7 +7,7 @@ public class ScoresCounter {
 
 	private int currentScores;
 	private int totalLevelScores;
-	private int eraseBallScore = 100;
+	private int eraseBallScore;
 	private List<ScoresCounterListener> listeners;
 
 	public ScoresCounter() {
@@ -39,10 +39,10 @@ public class ScoresCounter {
 		return currentScores;
 	}
 
-	public void setCurrentScores(int currentScores) {
-		validateByPositive(currentScores, "currentScores");
-		this.currentScores = currentScores;
-	}
+//	public void setCurrentScores(int currentScores) {
+//		validateByPositive(currentScores, "currentScores");
+//		this.currentScores = currentScores;
+//	}
 
 	public int getTotalLevelScores() {
 		return totalLevelScores;

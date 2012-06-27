@@ -15,7 +15,8 @@ public final class GameModel {
 
 	private void initScoresCounter() {
 		ScoresCounter scoresCounter = new ScoresCounter();
-		scoresCounter.setTotalLevelScores(25000);
+		scoresCounter.setEraseBallScore(10);
+		scoresCounter.setTotalLevelScores(2500);
 		setScoresCounter(scoresCounter);
 	}
 
