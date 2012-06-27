@@ -122,4 +122,25 @@ public class FieldTest extends TestCase {
 		assertTrue(field.getCell(0, 2).isEmpty());
 		assertTrue(field.getCell(0, 3).isEmpty());
 	}
+
+	public void testFillBusyCell() {
+		FillStrategy fillStrategy = new FillStrategy() {
+			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
+				Map<Cell, Ball> result = new HashMap<Cell, Ball>();
+				result.put(field.getCell(0, 0), TestUtils.getColoredBall(RED));
+
+				return result;
+			}
+		};
+
+		field.setFillStrategy(fillStrategy);
+
+		Ball ball = TestUtils.getColoredBall(RED);
+		field.getCell(0, 0).setBall(ball);
+		field.getCell(0, 1).setBall(TestUtils.getColoredBall(RED));
+		field.moveBall(field.getCell(0, 1), field.getCell(0, 2));
+
+		assertFalse(field.getCell(0, 0).isEmpty());
+		assertSame(field.getCell(0, 0).getBall(), ball);
+	}
 }
