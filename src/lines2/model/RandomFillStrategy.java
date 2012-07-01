@@ -2,13 +2,13 @@ package lines2.model;
 
 import java.util.*;
 
-class SimpleFillStrategy implements FillStrategy {
+class RandomFillStrategy implements FillStrategy {
 
 	private Random rand;
 	private int maxColorNumber;
 	private int left, right;
 
-	public SimpleFillStrategy(int maxColorNumber) {
+	public RandomFillStrategy(int maxColorNumber) {
 		this.maxColorNumber = maxColorNumber;
 		this.rand = new Random();
 	}
@@ -18,7 +18,7 @@ class SimpleFillStrategy implements FillStrategy {
 		this.right = right;
 	}
 
-	public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+	public Collection<Ball> getNextBalls(Iterable<Cell> cells) {
 		Collection<Ball> nextCells = new ArrayList<Ball>();
 
 		ArrayList<Cell> emptyCells = getEmptyCells(cells);

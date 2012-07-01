@@ -4,5 +4,5 @@ import java.util.*;
 
 public interface FillStrategy {
 
-	Collection<Ball> getNextFillCells(Iterable<Cell> cells);
+	Collection<Ball> getNextBalls(Iterable<Cell> cells);
 }

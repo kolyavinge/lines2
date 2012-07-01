@@ -22,7 +22,7 @@ public class Cell {
 		return col;
 	}
 
-	public void setPosition(int row, int col) {
+	void setPosition(int row, int col) {
 		this.row = row;
 		this.col = col;
 	}
@@ -37,7 +37,7 @@ public class Cell {
 		this.ball.setCell(this);
 	}
 
-	public void clear() {
+	void clear() {
 		if (isEmpty() == false) {
 			ball.setCell(null);
 			ball = null;

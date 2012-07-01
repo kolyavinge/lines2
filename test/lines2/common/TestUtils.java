@@ -47,7 +47,7 @@ public final class TestUtils {
 
 	public static FillStrategy getFillStrategyStub() {
 		return new FillStrategy() {
-			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+			public Collection<Ball> getNextBalls(Iterable<Cell> cells) {
 				return Collections.emptyList();
 			}
 		};

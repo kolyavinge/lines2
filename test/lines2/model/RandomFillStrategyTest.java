@@ -3,11 +3,11 @@ package lines2.model;
 import java.util.*;
 import junit.framework.TestCase;
 
-public class SimpleFillStrategyTest extends TestCase {
+public class RandomFillStrategyTest extends TestCase {
 
 	private Field field;
 	private int left = 2, right = 5;
-	private SimpleFillStrategy fillStrategy;
+	private RandomFillStrategy fillStrategy;
 
 	private int getEmptyCellsCount() {
 		int count = 0;
@@ -19,7 +19,7 @@ public class SimpleFillStrategyTest extends TestCase {
 	}
 
 	private void fillCells() {
-		Collection<Ball> nextBalls = fillStrategy.getNextFillCells(field.getCells());
+		Collection<Ball> nextBalls = fillStrategy.getNextBalls(field.getCells());
 		for (Ball ball : nextBalls) {
 			Cell cell = ball.getCell();
 			cell.setBall(ball);
@@ -28,7 +28,7 @@ public class SimpleFillStrategyTest extends TestCase {
 	
 	public void setUp() {
 		field = new Field(10, 10);
-		fillStrategy = new SimpleFillStrategy(3);
+		fillStrategy = new RandomFillStrategy(3);
 		fillStrategy.setFillRange(left, right);
 	}
 

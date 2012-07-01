@@ -1,31 +1,41 @@
 package lines2.app;
 
-import java.util.*;
-import lines2.model.*;
+import static android.graphics.BitmapFactory.decodeResource;
+import static lines2.app.R.drawable.ball_blue;
+import static lines2.app.R.drawable.ball_green;
+import static lines2.app.R.drawable.ball_orange;
+import static lines2.app.R.drawable.ball_purple;
+import static lines2.app.R.drawable.ball_red;
+import static lines2.model.Color.BLUE;
+import static lines2.model.Color.GREEN;
+import static lines2.model.Color.ORANGE;
+import static lines2.model.Color.PURPLE;
+import static lines2.model.Color.RED;
+import lines2.model.Ball;
+import lines2.model.Color;
+import lines2.model.ColoredBall;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import static lines2.model.Color.*;
 
-public class BallViewFactory {
+class BallViewFactory {
 
 	private Context context;
-	private Map<lines2.model.Color, Bitmap> bitmaps;
+	private Bitmap[] bitmaps;
 
 	public BallViewFactory(Context context) {
 		this.context = context;
-		loadBitmaps(context);  // сразу загрузим все картинки иначе будут тормоза
+		loadBitmaps(context); // сразу загрузим все картинки иначе будут тормоза
 	}
 
 	private void loadBitmaps(Context context) {
 		Resources res = context.getResources();
-		bitmaps = new HashMap<lines2.model.Color, Bitmap>();
-		bitmaps.put(RED, BitmapFactory.decodeResource(res, R.drawable.ball_red));
-		bitmaps.put(GREEN, BitmapFactory.decodeResource(res, R.drawable.ball_green));
-		bitmaps.put(BLUE, BitmapFactory.decodeResource(res, R.drawable.ball_blue));
-		bitmaps.put(ORANGE, BitmapFactory.decodeResource(res, R.drawable.ball_orange));
-		bitmaps.put(PURPLE, BitmapFactory.decodeResource(res, R.drawable.ball_purple));
+		bitmaps = new Bitmap[Color.getColorsCount()];
+		bitmaps[RED.getNumber()] = decodeResource(res, ball_red);
+		bitmaps[GREEN.getNumber()] = decodeResource(res, ball_green);
+		bitmaps[BLUE.getNumber()] = decodeResource(res, ball_blue);
+		bitmaps[ORANGE.getNumber()] = decodeResource(res, ball_orange);
+		bitmaps[PURPLE.getNumber()] = decodeResource(res, ball_purple);
 	}
 
 	public BallView getBallView(Ball ball) {
@@ -50,13 +60,14 @@ public class BallViewFactory {
 			return getColoredBallBitmap((ColoredBall) ball);
 		}
 
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Wrong ball type");
 	}
 
 	private Bitmap getColoredBallBitmap(ColoredBall ball) {
-		if (bitmaps.containsKey(ball.getColor()))
-			return bitmaps.get(ball.getColor());
-		else
-			throw new IllegalArgumentException();
+		try {
+			return bitmaps[ball.getColor().getNumber()];
+		} catch (Exception exp) {
+			throw new IllegalArgumentException("Wrong ball color");
+		}
 	}
 }

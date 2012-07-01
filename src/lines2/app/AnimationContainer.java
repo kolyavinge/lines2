@@ -3,7 +3,7 @@ package lines2.app;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 
-public class AnimationContainer {
+class AnimationContainer {
 
 	public static Animation getFillAnimation() {
 		Animation animation = new ScaleAnimation(

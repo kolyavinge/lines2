@@ -3,7 +3,7 @@ package lines2.app;
 import lines2.model.Cell;
 import lines2.model.Field;
 
-public class FieldPresenter {
+class FieldPresenter {
 
 	private Field field;
 	private Cell selectedCell;
@@ -14,10 +14,6 @@ public class FieldPresenter {
 
 	public Field getField() {
 		return field;
-	}
-
-	public Iterable<Cell> getFieldCells() {
-		return field.getCells();
 	}
 
 	public void selectCell(int row, int col) {

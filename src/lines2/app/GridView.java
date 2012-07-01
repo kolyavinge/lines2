@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
 
-public class GridView extends View {
+class GridView extends View {
 
 	private int rows, cols;
 	private boolean selectedCellExist;

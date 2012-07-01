@@ -12,10 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FieldView extends ViewGroup {
+class FieldView extends ViewGroup {
 
 	private static final int topOffset = 2;
-	private static final int ballOffset = 4;
+	private static final int ballOffset = 2;
 
 	private FieldPresenter presenter;
 	private BallViewFactory ballViewFactory;
@@ -55,16 +55,14 @@ public class FieldView extends ViewGroup {
 	}
 
 	private void addBallViews() {
-		for (Cell cell : presenter.getFieldCells()) {
-			if (cell.isEmpty() == false) {
-				BallView ballView = ballViewFactory.getBallView(cell.getBall());
-				addView(ballView);
-			}
+		for (Cell cell : presenter.getField().getNonEmptyCells()) {
+			BallView ballView = ballViewFactory.getBallView(cell.getBall());
+			addView(ballView);
 		}
 	}
 
 	private void addNextFillBallViews() {
-		for (Ball ball : presenter.getField().getNextFillCells()) {
+		for (Ball ball : presenter.getField().getNextBalls()) {
 			BallView ballView = ballViewFactory.getNextBallView(ball);
 			addView(ballView);
 		}
@@ -121,7 +119,7 @@ public class FieldView extends ViewGroup {
 				return ballView;
 		}
 
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Cant find BallView");
 	}
 
 	private void removeAllBallViews() {
@@ -129,19 +127,28 @@ public class FieldView extends ViewGroup {
 			removeView(ballView);
 	}
 
-	private Collection<BallView> getBallViews() {
-		Collection<BallView> result = new ArrayList<BallView>(getChildCount());
+	private Iterable<BallView> getBallViews() {
+		return getViews(BallView.class);
+	}
+
+	/**
+	 * Выбирает из всех дочерних вьюшек, только те, которые
+	 * соответствуют переданному типу
+	 */
+	@SuppressWarnings("unchecked")
+	private <T extends View> Iterable<T> getViews(Class<T> viewClass) {
+		Collection<T> result = new ArrayList<T>(getChildCount());
 
 		for (int i = 0; i < getChildCount(); i++) {
 			View child = getChildAt(i);
-			if (child instanceof BallView)
-				result.add((BallView) child);
+			if (child.getClass() == viewClass)
+				result.add((T) child);
 		}
 
 		return result;
 	}
 
-	/* -------------------- DefaultFieldListener -------------------- */
+	/* -------------------- FieldListener -------------------- */
 
 	private final DefaultFieldListener fieldListener = new DefaultFieldListener() {
 

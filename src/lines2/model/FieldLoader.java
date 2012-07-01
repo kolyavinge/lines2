@@ -9,7 +9,7 @@ public class FieldLoader {
 
 		field.setEraseStrategy(new StraightEraseStrategy(4));
 
-		SimpleFillStrategy fillStrategy = new SimpleFillStrategy(3);
+		RandomFillStrategy fillStrategy = new RandomFillStrategy(3);
 		fillStrategy.setFillRange(3, 4);
 		field.setFillStrategy(fillStrategy);
 

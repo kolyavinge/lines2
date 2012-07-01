@@ -4,6 +4,7 @@ import static lines2.model.Color.RED;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 import lines2.common.TestUtils;
@@ -44,6 +45,35 @@ public class FieldTest extends TestCase {
 			count++;
 		}
 		assertEquals(count, rows * cols);
+	}
+
+	public void testGetNonEmptyCells() {
+		Cell cell1 = field.getCell(0, 1);
+		Cell cell2 = field.getCell(1, 2);
+		cell1.setBall(TestUtils.getBall());
+		cell2.setBall(TestUtils.getBall());
+		Iterator<Cell> iter = field.getNonEmptyCells().iterator();
+		assertTrue(iter.hasNext());
+		assertSame(cell1, iter.next());
+		assertTrue(iter.hasNext());
+		assertSame(cell2, iter.next());
+		assertFalse(iter.hasNext());
+	}
+	
+	public void testGetEmptyCells() {
+		Cell cell = field.getCell(0, 1);
+		cell.setBall(TestUtils.getBall());
+		for (Cell emptyCell : field.getEmptyCells()) {
+			assertTrue(emptyCell != cell);
+			assertTrue(emptyCell.isEmpty());
+		}
+	}
+	
+	public void testGetEmptyCellsCount() {
+		assertEquals(rows * cols, field.getEmptyCellsCount());
+		Cell cell = field.getCell(0, 1);
+		cell.setBall(TestUtils.getBall());
+		assertEquals(rows * cols - 1, field.getEmptyCellsCount());
 	}
 
 	public void testMoveBall() {
@@ -103,7 +133,7 @@ public class FieldTest extends TestCase {
 		field.setEraseStrategy(new StraightEraseStrategy(4));
 
 		FillStrategy fillStrategy = new FillStrategy() {
-			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+			public Collection<Ball> getNextBalls(Iterable<Cell> cells) {
 				Collection<Ball> result = new ArrayList<Ball>();
 				Cell cell = field.getCell(0, 0);
 				Ball ball = TestUtils.getColoredBall(RED);
@@ -129,7 +159,7 @@ public class FieldTest extends TestCase {
 
 	public void testFillBusyCell() {
 		FillStrategy fillStrategy = new FillStrategy() {
-			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+			public Collection<Ball> getNextBalls(Iterable<Cell> cells) {
 				Collection<Ball> result = new ArrayList<Ball>();
 				Cell cell = field.getCell(0, 0);
 				Ball ball = TestUtils.getColoredBall(RED);
@@ -154,7 +184,7 @@ public class FieldTest extends TestCase {
 		field.setEraseStrategy(new StraightEraseStrategy(2));
 
 		FillStrategy fillStrategy = new FillStrategy() {
-			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+			public Collection<Ball> getNextBalls(Iterable<Cell> cells) {
 				Collection<Ball> result = new ArrayList<Ball>();
 				Cell cell = field.getCell(0, 0);
 				Ball ball = TestUtils.getColoredBall(RED);

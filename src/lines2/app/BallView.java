@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
 
-public class BallView extends View {
+class BallView extends View {
 
 	private static final int nextBallAlpha = 120;
 	private static final float nextBallScale = 0.1f;

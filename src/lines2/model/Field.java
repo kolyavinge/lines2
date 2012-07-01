@@ -10,7 +10,7 @@ public class Field {
 	private MoveStrategy moveStrategy;
 	private EraseStrategy eraseStrategy;
 	private FillStrategy fillStrategy;
-	private Collection<Ball> nextFillCells = Collections.emptyList();
+	private Collection<Ball> nextBalls = Collections.emptyList();
 	private Collection<FieldListener> fieldListeners = new ArrayList<FieldListener>();
 
 	public Field(int rows, int cols) {
@@ -23,37 +23,25 @@ public class Field {
 		this.cols = cols;
 	}
 
-	public MoveStrategy getMoveStrategy() {
-		return moveStrategy;
-	}
-
 	public void setMoveStrategy(MoveStrategy moveStrategy) {
 		this.moveStrategy = moveStrategy;
-	}
-
-	public EraseStrategy getEraseStrategy() {
-		return eraseStrategy;
 	}
 
 	public void setEraseStrategy(EraseStrategy eraseStrategy) {
 		this.eraseStrategy = eraseStrategy;
 	}
 
-	public FillStrategy getFillStrategy() {
-		return fillStrategy;
-	}
-
 	public void setFillStrategy(FillStrategy fillStrategy) {
 		this.fillStrategy = fillStrategy;
-		generateNextFillCells();
+		generateNextBalls();
 	}
 
 	public boolean isEmpty() {
 		return getEmptyCellsCount() == (rows * cols);
 	}
 
-	public Collection<Ball> getNextFillCells() {
-		return nextFillCells;
+	public Collection<Ball> getNextBalls() {
+		return nextBalls;
 	}
 
 	public int getRows() {
@@ -65,11 +53,35 @@ public class Field {
 	}
 
 	public Cell getCell(int row, int col) {
-		return cells[row][col];
+		try {
+			return cells[row][col];
+		} catch (Exception exp) {
+			throw new IllegalArgumentException(String.format("No cell on [%d:%d]", row, col));
+		}
 	}
 
 	public Iterable<Cell> getCells() {
 		return new IterableMatrix<Cell>(cells);
+	}
+
+	public Iterable<Cell> getEmptyCells() {
+		Collection<Cell> result = new ArrayList<Cell>();
+		for (Cell cell : getCells()) {
+			if (cell.isEmpty())
+				result.add(cell);
+		}
+
+		return result;
+	}
+
+	public Iterable<Cell> getNonEmptyCells() {
+		Collection<Cell> result = new ArrayList<Cell>();
+		for (Cell cell : getCells()) {
+			if (cell.isEmpty() == false)
+				result.add(cell);
+		}
+
+		return result;
 	}
 
 	public boolean cellExists(int row, int col) {
@@ -85,8 +97,9 @@ public class Field {
 		raiseOnBallMove(from, to);
 		if (eraseCells(to) == false) {
 			fillNextCells();
-			generateNextFillCells();
+			generateNextBalls();
 		}
+
 		// после стирания шаров поле может оказаться пустым
 		// в этом случае заполняем его
 		if (isEmpty())
@@ -94,24 +107,24 @@ public class Field {
 	}
 
 	void populate() {
-		if (nextFillCells.isEmpty())
-			generateNextFillCells();
+		if (nextBalls.isEmpty())
+			generateNextBalls();
 
 		fillNextCells();
-		generateNextFillCells();
+		generateNextBalls();
 
 		fillNextCells();
-		generateNextFillCells();
+		generateNextBalls();
 	}
 
-	private void generateNextFillCells() {
-		nextFillCells = fillStrategy.getNextFillCells(getCells());
+	private void generateNextBalls() {
+		nextBalls = fillStrategy.getNextBalls(getCells());
 	}
 
 	private void fillNextCells() {
 		Collection<Cell> filledCells = new ArrayList<Cell>();
 
-		for (Ball nextBall : nextFillCells) {
+		for (Ball nextBall : nextBalls) {
 			Cell cell = nextBall.getCell();
 			if (cell.isEmpty()) {
 				filledCells.add(cell);
@@ -167,7 +180,7 @@ public class Field {
 				cells[r][c] = new Cell(r, c);
 	}
 
-	private int getEmptyCellsCount() {
+	int getEmptyCellsCount() {
 		int count = 0;
 		for (Cell c : getCells())
 			if (c.isEmpty())
@@ -183,7 +196,7 @@ public class Field {
 	public void removeFieldListener(FieldListener fieldListener) {
 		this.fieldListeners.remove(fieldListener);
 	}
-	
+
 	private void raiseOnBallMove(Cell from, Cell to) {
 		for (FieldListener fieldListener : fieldListeners)
 			fieldListener.onBallMove(from, to);
