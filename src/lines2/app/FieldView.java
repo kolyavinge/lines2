@@ -25,13 +25,14 @@ public class FieldView extends ViewGroup {
 		super(context);
 		setPresenter(presenter);
 		setBallViewFactory(ballViewFactory);
-		createGridView(presenter, context);
+		createGridView(presenter.getField().getRows(), presenter.getField().getCols(), context);
 	}
 
-	private void createGridView(FieldPresenter presenter, Context context) {
+	private void createGridView(int gridRows, int gridCols, Context context) {
 		gridView = new GridView(context);
-		gridView.setColor(Color.WHITE);
-		gridView.setSize(presenter.getField().getRows(), presenter.getField().getCols());
+		gridView.setGridColor(Color.WHITE);
+		gridView.setSelectedCellColor(Color.YELLOW);
+		gridView.setSize(gridRows, gridCols);
 		addView(gridView);
 	}
 
@@ -129,7 +130,7 @@ public class FieldView extends ViewGroup {
 	}
 
 	private Collection<BallView> getBallViews() {
-		Collection<BallView> result = new ArrayList<BallView>();
+		Collection<BallView> result = new ArrayList<BallView>(getChildCount());
 
 		for (int i = 0; i < getChildCount(); i++) {
 			View child = getChildAt(i);

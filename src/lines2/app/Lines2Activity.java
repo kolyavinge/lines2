@@ -15,16 +15,11 @@ public class Lines2Activity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
 		gameModel = new GameModel();
 		gameModel.getScoresCounter().addListener(scoresCounterListener);
-
 		setScoresInTitleBar();
-
 		FieldPresenter fieldPresenter = new FieldPresenter(gameModel.getField());
-
 		FieldView fieldView = new FieldView(fieldPresenter, new BallViewFactory(this), this);
-
 		setContentView(fieldView);
 	}
 
@@ -36,6 +31,7 @@ public class Lines2Activity extends Activity {
 	}
 
 	private final DefaultScoresCounterListener scoresCounterListener = new DefaultScoresCounterListener() {
+
 		@Override
 		public void onScoreChanged(ScoresCounter scoresCounter) {
 			setScoresInTitleBar();

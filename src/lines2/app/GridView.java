@@ -2,7 +2,6 @@ package lines2.app;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
@@ -13,12 +12,11 @@ public class GridView extends View {
 	private boolean selectedCellExist;
 	private int selectedRow, selectedCol;
 	private float cellSize;
-	private Paint paint;
+	private int gridColor, selectedCellColor;
 
 	public GridView(Context context) {
 		super(context);
 		clearSelectedCell();
-		paint = new Paint();
 	}
 
 	public void setSize(int rows, int cols) {
@@ -30,8 +28,12 @@ public class GridView extends View {
 		return cellSize;
 	}
 
-	public void setColor(int color) {
-		paint.setColor(color);
+	public void setGridColor(int gridColor) {
+		this.gridColor = gridColor;
+	}
+
+	public void setSelectedCellColor(int selectedCellColor) {
+		this.selectedCellColor = selectedCellColor;
 	}
 
 	public void setSelectedCell(int row, int col) {
@@ -48,14 +50,13 @@ public class GridView extends View {
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		float width = right - left;
 		float height = bottom - top;
+		calculateCellSize(width, height);
+	}
 
+	private void calculateCellSize(float width, float height) {
 		float cellSizeHeight = height / rows - 0.1f;
 		float cellSizeWidth = width / cols - 0.1f;
-
-		if (cellSizeHeight * cols < width)
-			cellSize = cellSizeHeight;
-		else
-			cellSize = cellSizeWidth;
+		cellSize = (cellSizeHeight * cols < width) ? cellSizeHeight : cellSizeWidth;
 	}
 
 	@Override
@@ -67,6 +68,8 @@ public class GridView extends View {
 	}
 
 	private void drawHorizontalLines(Canvas canvas) {
+		Paint paint = new Paint();
+		paint.setColor(gridColor);
 		for (int row = 0; row <= rows; row++) {
 			float x0 = 0;
 			float y0 = row * cellSize;
@@ -77,6 +80,8 @@ public class GridView extends View {
 	}
 
 	private void drawVerticalLines(Canvas canvas) {
+		Paint paint = new Paint();
+		paint.setColor(gridColor);
 		for (int col = 0; col <= cols; col++) {
 			float x0 = col * cellSize;
 			float y0 = 0;
@@ -89,7 +94,7 @@ public class GridView extends View {
 	private void drawSelectedCell(Canvas canvas) {
 		RectF rect = getSelectedCellRect();
 		Paint paint = new Paint();
-		paint.setColor(Color.YELLOW);
+		paint.setColor(selectedCellColor);
 		canvas.drawRect(rect, paint);
 	}
 
