@@ -6,7 +6,9 @@ public enum Color {
 
 	RED(0),
 	GREEN(1),
-	BLUE(2);
+	BLUE(2),
+	ORANGE(3),
+	PURPLE(4);
 
 	public static Color getRandomColor() {
 		Random rand = new Random();
@@ -21,6 +23,10 @@ public enum Color {
 			return GREEN;
 		case 2:
 			return BLUE;
+		case 3:
+			return ORANGE;
+		case 4:
+			return PURPLE;
 		}
 
 		throw new IllegalArgumentException();

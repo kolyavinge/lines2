@@ -3,6 +3,7 @@ package lines2.app;
 import java.util.*;
 import lines2.model.*;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import static lines2.model.Color.*;
@@ -14,15 +15,17 @@ public class BallViewFactory {
 
 	public BallViewFactory(Context context) {
 		this.context = context;
-		// сразу загрузим все картинки иначе будут тормоза
-		loadBitmaps(context);
+		loadBitmaps(context);  // сразу загрузим все картинки иначе будут тормоза
 	}
 
 	private void loadBitmaps(Context context) {
+		Resources res = context.getResources();
 		bitmaps = new HashMap<lines2.model.Color, Bitmap>();
-		bitmaps.put(RED, BitmapFactory.decodeResource(context.getResources(), R.drawable.ball_red));
-		bitmaps.put(GREEN, BitmapFactory.decodeResource(context.getResources(), R.drawable.ball_green));
-		bitmaps.put(BLUE, BitmapFactory.decodeResource(context.getResources(), R.drawable.ball_blue));
+		bitmaps.put(RED, BitmapFactory.decodeResource(res, R.drawable.ball_red));
+		bitmaps.put(GREEN, BitmapFactory.decodeResource(res, R.drawable.ball_green));
+		bitmaps.put(BLUE, BitmapFactory.decodeResource(res, R.drawable.ball_blue));
+		bitmaps.put(ORANGE, BitmapFactory.decodeResource(res, R.drawable.ball_orange));
+		bitmaps.put(PURPLE, BitmapFactory.decodeResource(res, R.drawable.ball_purple));
 	}
 
 	public BallView getBallView(Ball ball) {

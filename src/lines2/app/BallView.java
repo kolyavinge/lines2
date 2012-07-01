@@ -10,7 +10,7 @@ import android.view.View;
 
 public class BallView extends View {
 
-	private static final int nextBallAlpha = 150;
+	private static final int nextBallAlpha = 120;
 
 	private boolean isNextBall;
 	private float width, height;
@@ -21,7 +21,7 @@ public class BallView extends View {
 	public BallView(Ball ball, Context context) {
 		super(context);
 		this.ball = ball;
-		paint = new Paint();
+		paint = new Paint(Paint.FILTER_BITMAP_FLAG);
 	}
 
 	public Ball getBall() {
@@ -61,14 +61,11 @@ public class BallView extends View {
 	}
 
 	private void setAlphaIfNeeded() {
-		if (isNextBall)
-			paint.setAlpha(nextBallAlpha);
-		else
-			paint.setAlpha(255);
+		paint.setAlpha(isNextBall ? nextBallAlpha : 255);
 	}
 
 	private RectF getBallRect() {
-		
+
 		return new RectF(0, 0, width, height);
 	}
 }

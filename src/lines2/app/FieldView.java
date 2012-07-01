@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 public class FieldView extends ViewGroup {
 
 	private static final int topOffset = 2;
-	private static final int ballOffset = 2;
+	private static final int ballOffset = 4;
 
 	private FieldPresenter presenter;
 	private BallViewFactory ballViewFactory;
@@ -81,8 +81,8 @@ public class FieldView extends ViewGroup {
 
 		float left = getCellSize() * col + ballOffset;
 		float top = getCellSize() * row + ballOffset + topOffset;
-		float right = left + getCellSize() - ballOffset;
-		float bottom = top + getCellSize() - ballOffset;
+		float right = left + getCellSize() - 2f * ballOffset;
+		float bottom = top + getCellSize() - 2f * ballOffset;
 
 		ballView.layout((int) left, (int) top, (int) right, (int) bottom);
 	}
@@ -141,7 +141,7 @@ public class FieldView extends ViewGroup {
 	}
 
 	/* -------------------- DefaultFieldListener -------------------- */
-	
+
 	private final DefaultFieldListener fieldListener = new DefaultFieldListener() {
 
 		@Override
