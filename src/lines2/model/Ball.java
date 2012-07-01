@@ -1,8 +1,23 @@
 package lines2.model;
 
-public interface Ball {
+public abstract class Ball {
 
-//	Cell getCell();
-	
-	BallType getType();
+	private BallType ballType;
+	private Cell cell;
+
+	public Ball(BallType ballType) {
+		this.ballType = ballType;
+	}
+
+	public final Cell getCell() {
+		return cell;
+	}
+
+	final void setCell(Cell cell) {
+		this.cell = cell;
+	}
+
+	public final BallType getType() {
+		return ballType;
+	}
 }

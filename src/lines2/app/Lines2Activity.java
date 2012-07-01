@@ -19,23 +19,20 @@ public class Lines2Activity extends Activity {
 		gameModel = new GameModel();
 		gameModel.getScoresCounter().addListener(scoresCounterListener);
 
+		setScoresInTitleBar();
+
 		FieldPresenter fieldPresenter = new FieldPresenter(gameModel.getField());
 
-		FieldView fieldView = new FieldView(this);
-		fieldView.setPresenter(fieldPresenter);
+		FieldView fieldView = new FieldView(fieldPresenter, new BallViewFactory(this), this);
 
-		MainView mainView = new MainView(this);
-		mainView.setFieldView(fieldView);
-
-		setContentView(mainView);
-
-		setScoresInTitleBar();
+		setContentView(fieldView);
 	}
 
 	private void setScoresInTitleBar() {
 		int current = gameModel.getScoresCounter().getCurrentScores();
 		int total = gameModel.getScoresCounter().getTotalLevelScores();
-		setTitle("Очки: " + Integer.toString(current) + " / " + Integer.toString(total));
+		String scoresString = String.format("Очки: %d / %d", current, total);
+		setTitle(scoresString);
 	}
 
 	private final DefaultScoresCounterListener scoresCounterListener = new DefaultScoresCounterListener() {

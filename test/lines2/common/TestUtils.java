@@ -2,7 +2,6 @@ package lines2.common;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 import lines2.model.Ball;
 import lines2.model.BallType;
@@ -16,12 +15,14 @@ import lines2.model.MoveStrategy;
 
 public final class TestUtils {
 
+	private static class BallStub extends Ball {
+		public BallStub() {
+			super(BallType._UNKNOWN);
+		}
+	}
+
 	public static Ball getBall() {
-		return new Ball() {
-			public BallType getType() {
-				return null;
-			}
-		};
+		return new BallStub();
 	}
 
 	public static ColoredBall getColoredBall(Color color) {
@@ -43,11 +44,11 @@ public final class TestUtils {
 			}
 		};
 	}
-	
+
 	public static FillStrategy getFillStrategyStub() {
 		return new FillStrategy() {
-			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
-				return Collections.emptyMap();
+			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+				return Collections.emptyList();
 			}
 		};
 	}

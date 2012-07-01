@@ -32,11 +32,16 @@ public class Cell {
 	}
 
 	public void setBall(Ball ball) {
+		clear();
 		this.ball = ball;
+		this.ball.setCell(this);
 	}
 
 	public void clear() {
-		ball = null;
+		if (isEmpty() == false) {
+			ball.setCell(null);
+			ball = null;
+		}
 	}
 
 	public boolean isEmpty() {

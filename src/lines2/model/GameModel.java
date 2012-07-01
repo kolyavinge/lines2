@@ -48,7 +48,7 @@ public final class GameModel {
 		this.scoresCounter.addListener(scoresCounterListener);
 	}
 
-	private final FieldListener fieldListener = new FieldListener() {
+	private final FieldListener fieldListener = new DefaultFieldListener() {
 
 		public void onEraseCells(Collection<Cell> erasedCells) {
 			scoresCounter.addByErasedBalls(erasedCells.size());

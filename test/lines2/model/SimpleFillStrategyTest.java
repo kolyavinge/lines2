@@ -19,10 +19,9 @@ public class SimpleFillStrategyTest extends TestCase {
 	}
 
 	private void fillCells() {
-		Map<Cell, Ball> nextCells = fillStrategy.getNextFillCells(field.getCells());
-		for (Map.Entry<Cell, Ball> kv : nextCells.entrySet()) {
-			Cell cell = kv.getKey();
-			Ball ball = kv.getValue();
+		Collection<Ball> nextBalls = fillStrategy.getNextFillCells(field.getCells());
+		for (Ball ball : nextBalls) {
+			Cell cell = ball.getCell();
 			cell.setBall(ball);
 		}
 	}

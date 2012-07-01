@@ -10,7 +10,7 @@ public class Field {
 	private MoveStrategy moveStrategy;
 	private EraseStrategy eraseStrategy;
 	private FillStrategy fillStrategy;
-	private Map<Cell, Ball> nextFillCells = Collections.emptyMap();
+	private Collection<Ball> nextFillCells = Collections.emptyList();
 	private Collection<FieldListener> fieldListeners = new ArrayList<FieldListener>();
 
 	public Field(int rows, int cols) {
@@ -52,7 +52,7 @@ public class Field {
 		return getEmptyCellsCount() == (rows * cols);
 	}
 
-	public Map<Cell, Ball> getNextFillCells() {
+	public Collection<Ball> getNextFillCells() {
 		return nextFillCells;
 	}
 
@@ -82,6 +82,7 @@ public class Field {
 			return;
 
 		swapCells(from, to);
+		raiseOnBallMove(from, to);
 		if (eraseCells(to) == false) {
 			fillNextCells();
 			generateNextFillCells();
@@ -108,15 +109,21 @@ public class Field {
 	}
 
 	private void fillNextCells() {
-		for (Map.Entry<Cell, Ball> kv : nextFillCells.entrySet()) {
-			Cell cell = kv.getKey();
+		Collection<Cell> filledCells = new ArrayList<Cell>();
+
+		for (Ball nextBall : nextFillCells) {
+			Cell cell = nextBall.getCell();
 			if (cell.isEmpty()) {
-				Ball ball = kv.getValue();
-				cell.setBall(ball);
-				// если после появления шарика образуется линия, то ее нужно стереть
-				eraseCells(cell);
+				filledCells.add(cell);
+				cell.setBall(nextBall);
 			}
 		}
+
+		raiseOnFillCells(filledCells);
+
+		// если после появления шарика образуется линия, то ее нужно стереть
+		for (Cell cell : filledCells)
+			eraseCells(cell);
 	}
 
 	private boolean checkMove(Cell from, Cell to) {
@@ -145,17 +152,12 @@ public class Field {
 		if (erasedCells.isEmpty())
 			return false;
 
+		raiseOnEraseCells(erasedCells);
+
 		for (Cell cell : erasedCells)
 			cell.clear();
 
-		raiseOnEraseCells(erasedCells);
-
 		return true;
-	}
-
-	private void raiseOnEraseCells(Collection<Cell> erasedCells) {
-		for (FieldListener fieldListener : fieldListeners)
-			fieldListener.onEraseCells(erasedCells);
 	}
 
 	private void initCells() {
@@ -180,5 +182,20 @@ public class Field {
 
 	public void removeFieldListener(FieldListener fieldListener) {
 		this.fieldListeners.remove(fieldListener);
+	}
+	
+	private void raiseOnBallMove(Cell from, Cell to) {
+		for (FieldListener fieldListener : fieldListeners)
+			fieldListener.onBallMove(from, to);
+	}
+
+	private void raiseOnFillCells(Collection<Cell> filledCells) {
+		for (FieldListener fieldListener : fieldListeners)
+			fieldListener.onFillCells(filledCells);
+	}
+
+	private void raiseOnEraseCells(Collection<Cell> erasedCells) {
+		for (FieldListener fieldListener : fieldListeners)
+			fieldListener.onEraseCells(erasedCells);
 	}
 }

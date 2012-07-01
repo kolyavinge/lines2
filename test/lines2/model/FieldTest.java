@@ -1,11 +1,12 @@
 package lines2.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import static lines2.model.Color.RED;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 import lines2.common.TestUtils;
-import static lines2.model.Color.*;
 
 public class FieldTest extends TestCase {
 
@@ -102,9 +103,12 @@ public class FieldTest extends TestCase {
 		field.setEraseStrategy(new StraightEraseStrategy(4));
 
 		FillStrategy fillStrategy = new FillStrategy() {
-			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
-				Map<Cell, Ball> result = new HashMap<Cell, Ball>();
-				result.put(field.getCell(0, 0), TestUtils.getColoredBall(RED));
+			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+				Collection<Ball> result = new ArrayList<Ball>();
+				Cell cell = field.getCell(0, 0);
+				Ball ball = TestUtils.getColoredBall(RED);
+				ball.setCell(cell);
+				result.add(ball);
 
 				return result;
 			}
@@ -125,9 +129,12 @@ public class FieldTest extends TestCase {
 
 	public void testFillBusyCell() {
 		FillStrategy fillStrategy = new FillStrategy() {
-			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
-				Map<Cell, Ball> result = new HashMap<Cell, Ball>();
-				result.put(field.getCell(0, 0), TestUtils.getColoredBall(RED));
+			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+				Collection<Ball> result = new ArrayList<Ball>();
+				Cell cell = field.getCell(0, 0);
+				Ball ball = TestUtils.getColoredBall(RED);
+				ball.setCell(cell);
+				result.add(ball);
 
 				return result;
 			}
@@ -142,24 +149,27 @@ public class FieldTest extends TestCase {
 		assertFalse(field.getCell(0, 0).isEmpty());
 		assertSame(field.getCell(0, 0).getBall(), ball);
 	}
-	
+
 	public void testFillAfterTotalErase() {
 		field.setEraseStrategy(new StraightEraseStrategy(2));
-		
+
 		FillStrategy fillStrategy = new FillStrategy() {
-			public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
-				Map<Cell, Ball> result = new HashMap<Cell, Ball>();
-				result.put(field.getCell(0, 0), TestUtils.getColoredBall(RED));
+			public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+				Collection<Ball> result = new ArrayList<Ball>();
+				Cell cell = field.getCell(0, 0);
+				Ball ball = TestUtils.getColoredBall(RED);
+				ball.setCell(cell);
+				result.add(ball);
 
 				return result;
 			}
 		};
 		field.setFillStrategy(fillStrategy);
-		
+
 		field.getCell(0, 0).setBall(TestUtils.getColoredBall(RED));
 		field.getCell(0, 2).setBall(TestUtils.getColoredBall(RED));
 		field.moveBall(field.getCell(0, 2), field.getCell(0, 1));
-		
+
 		assertFalse(field.getCell(0, 0).isEmpty());
 	}
 }

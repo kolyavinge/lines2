@@ -18,8 +18,8 @@ class SimpleFillStrategy implements FillStrategy {
 		this.right = right;
 	}
 
-	public Map<Cell, Ball> getNextFillCells(Iterable<Cell> cells) {
-		Map<Cell, Ball> nextCells = new HashMap<Cell, Ball>();
+	public Collection<Ball> getNextFillCells(Iterable<Cell> cells) {
+		Collection<Ball> nextCells = new ArrayList<Ball>();
 
 		ArrayList<Cell> emptyCells = getEmptyCells(cells);
 		int cellsToFillCount = left + rand.nextInt(right - left + 1);
@@ -28,7 +28,8 @@ class SimpleFillStrategy implements FillStrategy {
 			Cell cell = getRandomEmptyCell(emptyCells);
 			emptyCells.remove(cell);
 			Ball ball = getRandomBall();
-			nextCells.put(cell, ball);
+			ball.setCell(cell);
+			nextCells.add(ball);
 		}
 
 		return nextCells;
