@@ -28,6 +28,10 @@ class GridView extends View {
 		return cellSize;
 	}
 
+	public int getGridColor() {
+		return gridColor;
+	}
+
 	public void setGridColor(int gridColor) {
 		this.gridColor = gridColor;
 	}

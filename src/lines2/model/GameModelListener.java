@@ -1,6 +1,8 @@
 package lines2.model;
 
 public interface GameModelListener {
+	
+	void onLevelChanged();
 
-	void onScoreChanged(int currentScores);
+	void onGameOver();
 }

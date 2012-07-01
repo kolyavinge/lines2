@@ -72,11 +72,14 @@ public class Field extends FieldListenerManager {
 		generateNextBalls();
 	}
 
-	public void moveBall(Cell fromCell, Cell toCell) {
-		verifyMoveBallArgs(fromCell, toCell);
+	void moveBall(Cell fromCell, Cell toCell) {
+		if (moveBallArgsCorrect(fromCell, toCell) == false)
+			throw new MoveBallException();
 
-		if (checkPathInField(fromCell, toCell) == false)
+		if (checkPathInField(fromCell, toCell) == false) {
+			raiseOnIllegalMoveBall(fromCell, toCell);
 			return;
+		}
 
 		moveBallToCell(fromCell, toCell);
 		raiseOnMoveBall(fromCell, toCell);
@@ -84,6 +87,7 @@ public class Field extends FieldListenerManager {
 		if (tryEraseLine(toCell) == false) {
 			Collection<Cell> filledCells = fillNextCells();
 			tryEraseLinesForCells(filledCells);
+			verifyFullField();
 			generateNextBalls();
 		}
 
@@ -140,14 +144,16 @@ public class Field extends FieldListenerManager {
 		nextBalls = fillStrategy.getNextBalls(getCells());
 	}
 
-	private void verifyMoveBallArgs(Cell from, Cell to) {
-		if (from == to)
-			throw new IllegalArgumentException("Нельзя перемещать шарик на клетку в которой он находится");
+	private void verifyFullField() {
+		if (cellMatrix.getEmptyCellsCount() < 2)
+			throw new FieldOverflowException();
+	}
 
-		if (from.isEmpty())
-			throw new IllegalArgumentException("Не выбран шарик для перемещения");
+	private boolean moveBallArgsCorrect(Cell from, Cell to) {
+		boolean result = from != to;
+		result &= from.isEmpty() == false;
+		result &= to.isEmpty();
 
-		if (to.isEmpty() == false)
-			throw new IllegalArgumentException("Нельзя перемещать шарик в непустую клетку");
+		return result;
 	}
 }

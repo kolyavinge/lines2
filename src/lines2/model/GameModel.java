@@ -1,16 +1,43 @@
 package lines2.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public final class GameModel {
+public final class GameModel implements MoveBallAction {
 
 	private Field field;
 	private ScoresCounter scoresCounter;
-	private GameModelListener listener;
+	private GameState gameState;
+	private Collection<GameModelListener> listeners;
 
 	public GameModel() {
+		listeners = new ArrayList<GameModelListener>();
+		gameState = GameState.NORMAL;
 		initField();
 		initScoresCounter();
+	}
+
+	public void moveBall(Cell fromCell, Cell toCell) {
+		if (gameState == GameState.NORMAL) {
+			tryMoveBall(fromCell, toCell);
+		} else if (gameState == GameState.GAME_OVER) {
+			raiseOnGameOver();
+		}
+	}
+
+	private void tryMoveBall(Cell fromCell, Cell toCell) {
+		try {
+			field.moveBall(fromCell, toCell);
+		} catch (MoveBallException exp) {
+			// ignore
+		} catch (FieldOverflowException exp) {
+			gameOver();
+		}
+	}
+
+	private void gameOver() {
+		gameState = GameState.GAME_OVER;
+		raiseOnGameOver();
 	}
 
 	private void initScoresCounter() {
@@ -26,8 +53,17 @@ public final class GameModel {
 		setField(field);
 	}
 
-	public void setListener(GameModelListener listener) {
-		this.listener = listener;
+	public void addListener(GameModelListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(GameModelListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void raiseOnGameOver() {
+		for (GameModelListener listener : listeners)
+			listener.onGameOver();
 	}
 
 	public Field getField() {
@@ -48,19 +84,26 @@ public final class GameModel {
 		this.scoresCounter.addListener(scoresCounterListener);
 	}
 
-	private final FieldListener fieldListener = new DefaultFieldListener() {
+	public GameState getGameState() {
+		return gameState;
+	}
 
+	/* ------------------- FieldListener ------------------- */
+
+	private final DefaultFieldListener fieldListener = new DefaultFieldListener() {
+
+		@Override
 		public void onEraseCells(Collection<Cell> erasedCells) {
 			scoresCounter.addByErasedBalls(erasedCells.size());
 		}
 	};
 
-	private final ScoresCounterListener scoresCounterListener = new ScoresCounterListener() {
+	/* ------------------- ScoresCounterListener ------------------- */
 
+	private final DefaultScoresCounterListener scoresCounterListener = new DefaultScoresCounterListener() {
+
+		@Override
 		public void onScoreComplete(ScoresCounter scoresCounter) {
-		}
-
-		public void onScoreChanged(ScoresCounter scoresCounter) {
 		}
 	};
 }

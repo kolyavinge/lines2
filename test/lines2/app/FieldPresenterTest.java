@@ -5,6 +5,7 @@ import lines2.common.FieldStub;
 import lines2.common.TestUtils;
 import lines2.model.Ball;
 import lines2.model.Cell;
+import lines2.model.MoveBallAction;
 
 public class FieldPresenterTest extends TestCase {
 
@@ -12,9 +13,17 @@ public class FieldPresenterTest extends TestCase {
 	private FieldStub fieldStub;
 	private FieldPresenter presenter;
 
+	private final MoveBallAction moveBallAction = new MoveBallAction() {
+		public void moveBall(Cell fromCell, Cell toCell) {
+		}
+	};
+
 	public void setUp() {
 		fieldStub = new FieldStub(fieldRows, fieldCols);
-		presenter = new FieldPresenter(fieldStub);
+		fieldStub.setEraseStrategy(TestUtils.getEraseStrategyStub());
+		fieldStub.setFillStrategy(TestUtils.getFillStrategyStub());
+		fieldStub.setMoveStrategy(TestUtils.getMoveStrategyStub());
+		presenter = new FieldPresenter(fieldStub, moveBallAction);
 	}
 
 	public void testConstructor() {

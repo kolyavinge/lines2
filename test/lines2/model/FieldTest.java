@@ -49,7 +49,7 @@ public class FieldTest extends TestCase {
 		try {
 			field.moveBall(from, to);
 			fail();
-		} catch (IllegalArgumentException exp) {
+		} catch (MoveBallException exp) {
 		}
 	}
 
@@ -63,7 +63,7 @@ public class FieldTest extends TestCase {
 		try {
 			field.moveBall(from, to);
 			fail();
-		} catch (IllegalArgumentException exp) {
+		} catch (MoveBallException exp) {
 		}
 	}
 
@@ -73,7 +73,7 @@ public class FieldTest extends TestCase {
 		try {
 			field.moveBall(from, to);
 			fail();
-		} catch (IllegalArgumentException exp) {
+		} catch (MoveBallException exp) {
 		}
 	}
 
@@ -158,5 +158,31 @@ public class FieldTest extends TestCase {
 		field.moveBall(field.getCell(0, 2), field.getCell(0, 1));
 
 		assertFalse(field.getCell(0, 0).isEmpty());
+	}
+
+	public void testFieldIsFull() {
+		for (Cell cell : field.getCells())
+			cell.setBall(TestUtils.getBall());
+
+		field.getCell(0, 0).clear();
+
+		FillStrategy fillStrategy = new FillStrategy() {
+			public Collection<Ball> getNextBalls(Iterable<Cell> cells) {
+				Collection<Ball> result = new ArrayList<Ball>();
+				Cell cell = field.getCell(0, 1);
+				Ball ball = TestUtils.getColoredBall(RED);
+				ball.setCell(cell);
+				result.add(ball);
+
+				return result;
+			}
+		};
+		field.setFillStrategy(fillStrategy);
+
+		try {
+			field.moveBall(field.getCell(0, 1), field.getCell(0, 0));
+			fail();
+		} catch (FieldOverflowException exp) {
+		}
 	}
 }

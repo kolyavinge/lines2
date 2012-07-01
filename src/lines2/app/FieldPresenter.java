@@ -1,15 +1,16 @@
 package lines2.app;
 
-import lines2.model.Cell;
-import lines2.model.Field;
+import lines2.model.*;
 
 class FieldPresenter {
 
 	private Field field;
+	private MoveBallAction moveBallAction;
 	private Cell selectedCell;
 
-	public FieldPresenter(Field field) {
+	public FieldPresenter(Field field, MoveBallAction moveBallAction) {
 		this.field = field;
+		this.moveBallAction = moveBallAction;
 	}
 
 	public Field getField() {
@@ -27,15 +28,8 @@ class FieldPresenter {
 		if (!currentCell.isEmpty()) {
 			selectedCell = currentCell;
 		} else if (!noSelectedCell() && currentCell.isEmpty()) {
-			tryMoveBallTo(currentCell);
+			moveBallAction.moveBall(selectedCell, currentCell);
 			clearSelectedCell();
-		}
-	}
-
-	private void tryMoveBallTo(Cell destinationCell) {
-		try {
-			field.moveBall(selectedCell, destinationCell);
-		} catch (Exception exp) {
 		}
 	}
 

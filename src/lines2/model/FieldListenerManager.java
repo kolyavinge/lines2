@@ -18,6 +18,11 @@ class FieldListenerManager {
 		for (FieldListener fieldListener : fieldListeners)
 			fieldListener.onMoveBall(from, to);
 	}
+	
+	protected void raiseOnIllegalMoveBall(Cell from, Cell to) {
+		for (FieldListener fieldListener : fieldListeners)
+			fieldListener.onIllegalMoveBall(from, to);
+	}
 
 	protected void raiseOnFillCells(Collection<Cell> filledCells) {
 		for (FieldListener fieldListener : fieldListeners)

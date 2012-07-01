@@ -7,6 +7,9 @@ public class DefaultFieldListener implements FieldListener {
 	public void onMoveBall(Cell from, Cell to) {
 	}
 
+	public void onIllegalMoveBall(Cell from, Cell to) {
+	}
+
 	public void onFillCells(Collection<Cell> filledCells) {
 	}
 

@@ -17,24 +17,30 @@ public class Lines2Activity extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		gameModel = new GameModel();
 		gameModel.getScoresCounter().addListener(scoresCounterListener);
-		setScoresInTitleBar();
-		FieldPresenter fieldPresenter = new FieldPresenter(gameModel.getField());
-		FieldView fieldView = new FieldView(fieldPresenter, new BallViewFactory(this), this);
+		setScoresInTitleBar(gameModel.getScoresCounter());
+		initFieldView(gameModel);
+	}
+
+	private void initFieldView(GameModel gameModel) {
+		FieldPresenter fieldPresenter = new FieldPresenter(gameModel.getField(), gameModel);
+		BallViewFactory ballViewFactory = new BallViewFactory(this);
+		FieldView fieldView = new FieldView(fieldPresenter, ballViewFactory, this);
 		setContentView(fieldView);
 	}
 
-	private void setScoresInTitleBar() {
-		int current = gameModel.getScoresCounter().getCurrentScores();
-		int total = gameModel.getScoresCounter().getTotalLevelScores();
+	private void setScoresInTitleBar(ScoresCounter scoresCounter) {
+		int current = scoresCounter.getCurrentScores();
+		int total = scoresCounter.getTotalLevelScores();
 		String scoresString = String.format("Очки: %d / %d", current, total);
 		setTitle(scoresString);
 	}
 
+	/* -------------------------- ScoresCounterListener -------------------------- */
 	private final DefaultScoresCounterListener scoresCounterListener = new DefaultScoresCounterListener() {
 
 		@Override
 		public void onScoreChanged(ScoresCounter scoresCounter) {
-			setScoresInTitleBar();
+			setScoresInTitleBar(scoresCounter);
 		}
 	};
 }

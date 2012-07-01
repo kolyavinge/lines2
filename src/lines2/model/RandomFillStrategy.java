@@ -36,8 +36,8 @@ class RandomFillStrategy implements FillStrategy {
 	}
 
 	private Ball getRandomBall() {
-		int num = rand.nextInt(maxColorNumber);
-		Color color = Color.getColorByNumber(num);
+		int randomColor = rand.nextInt(maxColorNumber);
+		Color color = Color.getColorByNumber(randomColor);
 
 		return new ColoredBall(color);
 	}

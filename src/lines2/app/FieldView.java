@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 
 class FieldView extends ViewGroup {
 
@@ -158,6 +159,12 @@ class FieldView extends ViewGroup {
 			BallView ballView = findBallView(ball);
 			layoutBallView(ballView);
 			requestLayout();
+		}
+
+		@Override
+		public void onIllegalMoveBall(Cell from, Cell to) {
+			Animation illegalMoveAnimation = AnimationContainer.getIllegalMoveAnimation(gridView);
+			gridView.startAnimation(illegalMoveAnimation);
 		}
 
 		@Override
