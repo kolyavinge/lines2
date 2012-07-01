@@ -29,10 +29,6 @@ public class Field extends FieldListenerManager {
 		generateNextBalls();
 	}
 
-	public boolean isEmpty() {
-		return cellMatrix.getCellsCount() == cellMatrix.getEmptyCellsCount();
-	}
-
 	public Collection<Ball> getNextBalls() {
 		return nextBalls;
 	}
@@ -65,35 +61,6 @@ public class Field extends FieldListenerManager {
 		return cellMatrix.cellExists(row, col);
 	}
 
-	public void moveBall(Cell from, Cell to) {
-		verifyMoveBallArgs(from, to);
-		if (checkMove(from, to) == false)
-			return;
-
-		swapCells(from, to);
-		raiseOnBallMove(from, to);
-		if (eraseCells(to) == false) {
-			fillNextCells();
-			generateNextBalls();
-		}
-
-		// после стирания шаров поле может оказаться пустым
-		// в этом случае заполняем его
-		if (isEmpty())
-			populate();
-	}
-	
-	private void verifyMoveBallArgs(Cell from, Cell to) {
-		if (from == to)
-			throw new IllegalArgumentException();
-
-		if (from.isEmpty())
-			throw new IllegalArgumentException();
-
-		if (to.isEmpty() == false)
-			throw new IllegalArgumentException();
-	}
-
 	void populate() {
 		if (nextBalls.isEmpty())
 			generateNextBalls();
@@ -105,39 +72,37 @@ public class Field extends FieldListenerManager {
 		generateNextBalls();
 	}
 
-	private void generateNextBalls() {
-		nextBalls = fillStrategy.getNextBalls(getCells());
-	}
+	public void moveBall(Cell fromCell, Cell toCell) {
+		verifyMoveBallArgs(fromCell, toCell);
 
-	private void fillNextCells() {
-		Collection<Cell> filledCells = new ArrayList<Cell>();
+		if (checkPathInField(fromCell, toCell) == false)
+			return;
 
-		for (Ball nextBall : nextBalls) {
-			Cell cell = nextBall.getCell();
-			if (cell.isEmpty()) {
-				filledCells.add(cell);
-				cell.setBall(nextBall);
-			}
+		moveBallToCell(fromCell, toCell);
+		raiseOnMoveBall(fromCell, toCell);
+
+		if (tryEraseLine(toCell) == false) {
+			Collection<Cell> filledCells = fillNextCells();
+			tryEraseLinesForCells(filledCells);
+			generateNextBalls();
 		}
 
-		raiseOnFillCells(filledCells);
-
-		// если после появления шарика образуется линия, то ее нужно стереть
-		for (Cell cell : filledCells)
-			eraseCells(cell);
+		boolean fieldIsEmpty = cellMatrix.getCellsCount() == cellMatrix.getEmptyCellsCount();
+		if (fieldIsEmpty)
+			populate();
 	}
 
-	private boolean checkMove(Cell from, Cell to) {
+	private boolean checkPathInField(Cell from, Cell to) {
 		return moveStrategy.checkMove(this, from, to);
 	}
 
-	private void swapCells(Cell from, Cell to) {
+	private void moveBallToCell(Cell from, Cell to) {
 		Ball ball = from.getBall();
 		from.clear();
 		to.setBall(ball);
 	}
 
-	private boolean eraseCells(Cell lastStepCell) {
+	private boolean tryEraseLine(Cell lastStepCell) {
 		Collection<Cell> erasedCells = eraseStrategy.getErasedCells(this, lastStepCell);
 		if (erasedCells.isEmpty())
 			return false;
@@ -148,5 +113,41 @@ public class Field extends FieldListenerManager {
 			cell.clear();
 
 		return true;
+	}
+
+	private void tryEraseLinesForCells(Iterable<Cell> filledCells) {
+		for (Cell cell : filledCells)
+			tryEraseLine(cell);
+	}
+
+	private Collection<Cell> fillNextCells() {
+		Collection<Cell> filledCells = new ArrayList<Cell>();
+
+		for (Ball nextBall : nextBalls) {
+			Cell cell = nextBall.getCell();
+			if (cell.isEmpty()) {
+				cell.setBall(nextBall);
+				filledCells.add(cell);
+			}
+		}
+
+		raiseOnFillCells(filledCells);
+
+		return filledCells;
+	}
+
+	private void generateNextBalls() {
+		nextBalls = fillStrategy.getNextBalls(getCells());
+	}
+
+	private void verifyMoveBallArgs(Cell from, Cell to) {
+		if (from == to)
+			throw new IllegalArgumentException("Нельзя перемещать шарик на клетку в которой он находится");
+
+		if (from.isEmpty())
+			throw new IllegalArgumentException("Не выбран шарик для перемещения");
+
+		if (to.isEmpty() == false)
+			throw new IllegalArgumentException("Нельзя перемещать шарик в непустую клетку");
 	}
 }

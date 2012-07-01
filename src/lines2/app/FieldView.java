@@ -153,7 +153,7 @@ class FieldView extends ViewGroup {
 	private final DefaultFieldListener fieldListener = new DefaultFieldListener() {
 
 		@Override
-		public void onBallMove(Cell from, Cell to) {
+		public void onMoveBall(Cell from, Cell to) {
 			Ball ball = to.getBall();
 			BallView ballView = findBallView(ball);
 			layoutBallView(ballView);

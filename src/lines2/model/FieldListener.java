@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface FieldListener {
 	
-	void onBallMove(Cell from, Cell to);
+	void onMoveBall(Cell from, Cell to);
 
 	void onFillCells(Collection<Cell> filledCells);
 

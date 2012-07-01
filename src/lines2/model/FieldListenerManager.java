@@ -14,9 +14,9 @@ class FieldListenerManager {
 		this.fieldListeners.remove(fieldListener);
 	}
 
-	protected void raiseOnBallMove(Cell from, Cell to) {
+	protected void raiseOnMoveBall(Cell from, Cell to) {
 		for (FieldListener fieldListener : fieldListeners)
-			fieldListener.onBallMove(from, to);
+			fieldListener.onMoveBall(from, to);
 	}
 
 	protected void raiseOnFillCells(Collection<Cell> filledCells) {

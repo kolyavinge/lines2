@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class DefaultFieldListener implements FieldListener {
 
-	public void onBallMove(Cell from, Cell to) {
+	public void onMoveBall(Cell from, Cell to) {
 	}
 
 	public void onFillCells(Collection<Cell> filledCells) {
