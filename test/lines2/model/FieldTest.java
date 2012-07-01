@@ -184,5 +184,7 @@ public class FieldTest extends TestCase {
 			fail();
 		} catch (FieldOverflowException exp) {
 		}
+		
+		assertTrue(field.getNextBalls().isEmpty());
 	}
 }

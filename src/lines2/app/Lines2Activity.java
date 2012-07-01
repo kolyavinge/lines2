@@ -1,5 +1,6 @@
 package lines2.app;
 
+import lines2.model.DefaultGameModelListener;
 import lines2.model.DefaultScoresCounterListener;
 import lines2.model.GameModel;
 import lines2.model.ScoresCounter;
@@ -16,6 +17,7 @@ public class Lines2Activity extends Activity {
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		gameModel = new GameModel();
+		gameModel.addListener(gameModelListener);
 		gameModel.getScoresCounter().addListener(scoresCounterListener);
 		setScoresInTitleBar(gameModel.getScoresCounter());
 		initFieldView(gameModel);
@@ -34,8 +36,20 @@ public class Lines2Activity extends Activity {
 		String scoresString = String.format("Очки: %d / %d", current, total);
 		setTitle(scoresString);
 	}
+	
+	/* -------------------------- GameModelListener -------------------------- */
+	
+	private final DefaultGameModelListener gameModelListener = new DefaultGameModelListener() {
+
+		@Override
+		public void onGameOver() {
+			GameOverAlertDialog alertDialog = new GameOverAlertDialog(Lines2Activity.this);
+			alertDialog.show();
+		}
+	};
 
 	/* -------------------------- ScoresCounterListener -------------------------- */
+	
 	private final DefaultScoresCounterListener scoresCounterListener = new DefaultScoresCounterListener() {
 
 		@Override

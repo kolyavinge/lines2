@@ -87,6 +87,7 @@ public class Field extends FieldListenerManager {
 		if (tryEraseLine(toCell) == false) {
 			Collection<Cell> filledCells = fillNextCells();
 			tryEraseLinesForCells(filledCells);
+			clearNextBalls();
 			verifyFullField();
 			generateNextBalls();
 		}
@@ -142,6 +143,10 @@ public class Field extends FieldListenerManager {
 
 	private void generateNextBalls() {
 		nextBalls = fillStrategy.getNextBalls(getCells());
+	}
+	
+	private void clearNextBalls() {
+		nextBalls.clear();
 	}
 
 	private void verifyFullField() {
