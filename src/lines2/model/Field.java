@@ -1,26 +1,19 @@
 package lines2.model;
 
-import java.util.*;
-import lines2.utils.IterableMatrix;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
-public class Field {
+public class Field extends FieldListenerManager {
 
-	private int rows, cols;
-	private Cell[][] cells;
+	private CellMatrix cellMatrix;
 	private MoveStrategy moveStrategy;
 	private EraseStrategy eraseStrategy;
 	private FillStrategy fillStrategy;
 	private Collection<Ball> nextBalls = Collections.emptyList();
-	private Collection<FieldListener> fieldListeners = new ArrayList<FieldListener>();
 
 	public Field(int rows, int cols) {
-		setSize(rows, cols);
-		initCells();
-	}
-
-	private void setSize(int rows, int cols) {
-		this.rows = rows;
-		this.cols = cols;
+		cellMatrix = new CellMatrix(rows, cols);
 	}
 
 	public void setMoveStrategy(MoveStrategy moveStrategy) {
@@ -37,7 +30,7 @@ public class Field {
 	}
 
 	public boolean isEmpty() {
-		return getEmptyCellsCount() == (rows * cols);
+		return cellMatrix.getCellsCount() == cellMatrix.getEmptyCellsCount();
 	}
 
 	public Collection<Ball> getNextBalls() {
@@ -45,47 +38,31 @@ public class Field {
 	}
 
 	public int getRows() {
-		return rows;
+		return cellMatrix.getRows();
 	}
 
 	public int getCols() {
-		return cols;
+		return cellMatrix.getCols();
 	}
 
 	public Cell getCell(int row, int col) {
-		try {
-			return cells[row][col];
-		} catch (Exception exp) {
-			throw new IllegalArgumentException(String.format("No cell on [%d:%d]", row, col));
-		}
+		return cellMatrix.getCell(row, col);
 	}
 
 	public Iterable<Cell> getCells() {
-		return new IterableMatrix<Cell>(cells);
+		return cellMatrix.getCells();
 	}
 
 	public Iterable<Cell> getEmptyCells() {
-		Collection<Cell> result = new ArrayList<Cell>();
-		for (Cell cell : getCells()) {
-			if (cell.isEmpty())
-				result.add(cell);
-		}
-
-		return result;
+		return cellMatrix.getEmptyCells();
 	}
 
 	public Iterable<Cell> getNonEmptyCells() {
-		Collection<Cell> result = new ArrayList<Cell>();
-		for (Cell cell : getCells()) {
-			if (cell.isEmpty() == false)
-				result.add(cell);
-		}
-
-		return result;
+		return cellMatrix.getNonEmptyCells();
 	}
 
 	public boolean cellExists(int row, int col) {
-		return (0 <= row && row < rows) && (0 <= col && col < cols);
+		return cellMatrix.cellExists(row, col);
 	}
 
 	public void moveBall(Cell from, Cell to) {
@@ -104,6 +81,17 @@ public class Field {
 		// в этом случае заполняем его
 		if (isEmpty())
 			populate();
+	}
+	
+	private void verifyMoveBallArgs(Cell from, Cell to) {
+		if (from == to)
+			throw new IllegalArgumentException();
+
+		if (from.isEmpty())
+			throw new IllegalArgumentException();
+
+		if (to.isEmpty() == false)
+			throw new IllegalArgumentException();
 	}
 
 	void populate() {
@@ -143,17 +131,6 @@ public class Field {
 		return moveStrategy.checkMove(this, from, to);
 	}
 
-	private void verifyMoveBallArgs(Cell from, Cell to) {
-		if (from == to)
-			throw new IllegalArgumentException();
-
-		if (from.isEmpty())
-			throw new IllegalArgumentException();
-
-		if (to.isEmpty() == false)
-			throw new IllegalArgumentException();
-	}
-
 	private void swapCells(Cell from, Cell to) {
 		Ball ball = from.getBall();
 		from.clear();
@@ -171,44 +148,5 @@ public class Field {
 			cell.clear();
 
 		return true;
-	}
-
-	private void initCells() {
-		cells = new Cell[rows][cols];
-		for (int r = 0; r < rows; r++)
-			for (int c = 0; c < cols; c++)
-				cells[r][c] = new Cell(r, c);
-	}
-
-	int getEmptyCellsCount() {
-		int count = 0;
-		for (Cell c : getCells())
-			if (c.isEmpty())
-				count++;
-
-		return count;
-	}
-
-	public void addFieldListener(FieldListener fieldListener) {
-		this.fieldListeners.add(fieldListener);
-	}
-
-	public void removeFieldListener(FieldListener fieldListener) {
-		this.fieldListeners.remove(fieldListener);
-	}
-
-	private void raiseOnBallMove(Cell from, Cell to) {
-		for (FieldListener fieldListener : fieldListeners)
-			fieldListener.onBallMove(from, to);
-	}
-
-	private void raiseOnFillCells(Collection<Cell> filledCells) {
-		for (FieldListener fieldListener : fieldListeners)
-			fieldListener.onFillCells(filledCells);
-	}
-
-	private void raiseOnEraseCells(Collection<Cell> erasedCells) {
-		for (FieldListener fieldListener : fieldListeners)
-			fieldListener.onEraseCells(erasedCells);
 	}
 }
