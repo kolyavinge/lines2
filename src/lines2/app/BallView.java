@@ -11,6 +11,7 @@ import android.view.View;
 public class BallView extends View {
 
 	private static final int nextBallAlpha = 120;
+	private static final float nextBallScale = 0.1f;
 
 	private boolean isNextBall;
 	private float width, height;
@@ -52,20 +53,19 @@ public class BallView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		setAlphaIfNeeded();
-		drawBallBitmap(canvas);
-	}
-
-	private void drawBallBitmap(Canvas canvas) {
-		canvas.drawBitmap(ballBitmap, null, getBallRect(), paint);
-	}
-
-	private void setAlphaIfNeeded() {
 		paint.setAlpha(isNextBall ? nextBallAlpha : 255);
+		RectF rect = isNextBall ? getNextBallRect() : getBallRect();
+		canvas.drawBitmap(ballBitmap, null, rect, paint);
 	}
 
 	private RectF getBallRect() {
-
 		return new RectF(0, 0, width, height);
+	}
+
+	private RectF getNextBallRect() {
+		float widthScale = nextBallScale * width;
+		float heightScale = nextBallScale * height;
+
+		return new RectF(widthScale, heightScale, width - widthScale, height - heightScale);
 	}
 }
