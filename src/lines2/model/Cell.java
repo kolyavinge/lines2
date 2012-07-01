@@ -31,7 +31,7 @@ public class Cell {
 		return ball;
 	}
 
-	public void setBall(Ball ball) {
+	protected void setBall(Ball ball) {
 		clear();
 		this.ball = ball;
 		this.ball.setCell(this);

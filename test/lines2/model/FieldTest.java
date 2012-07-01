@@ -17,6 +17,14 @@ public class FieldTest extends TestCase {
 	private EraseStrategy eraseStrategy = TestUtils.getEraseStrategyStub();
 	private FillStrategy fillStrategy = TestUtils.getFillStrategyStub();
 
+	private boolean isEmptyCell(int row, int col) {
+		return field.getCell(row, col).isEmpty();
+	}
+
+	private void setBallToField(int row, int col, Ball ball) {
+		field.getCell(row, col).setBall(ball);
+	}
+
 	public void setUp() {
 		field = new Field(rows, cols);
 		field.setMoveStrategy(moveStrategy);
@@ -92,17 +100,17 @@ public class FieldTest extends TestCase {
 			}
 		};
 
-		field.getCell(0, 1).setBall(TestUtils.getColoredBall(RED));
-		field.getCell(0, 2).setBall(TestUtils.getColoredBall(RED));
+		setBallToField(0, 1, TestUtils.getColoredBall(RED));
+		setBallToField(0, 2, TestUtils.getColoredBall(RED));
 		field.setFillStrategy(fillStrategy);
-		field.getCell(0, 4).setBall(TestUtils.getColoredBall(RED));
+		setBallToField(0, 4, TestUtils.getColoredBall(RED));
 
 		field.moveBall(field.getCell(0, 4), field.getCell(0, 3));
 
-		assertFalse(field.getCell(0, 0).isEmpty());
-		assertTrue(field.getCell(0, 1).isEmpty());
-		assertTrue(field.getCell(0, 2).isEmpty());
-		assertTrue(field.getCell(0, 3).isEmpty());
+		assertFalse(isEmptyCell(0, 0));
+		assertTrue(isEmptyCell(0, 1));
+		assertTrue(isEmptyCell(0, 2));
+		assertTrue(isEmptyCell(0, 3));
 	}
 
 	public void testFillBusyCell() {
@@ -120,11 +128,11 @@ public class FieldTest extends TestCase {
 		field.setFillStrategy(fillStrategy);
 
 		Ball ball = TestUtils.getColoredBall(RED);
-		field.getCell(0, 0).setBall(ball);
-		field.getCell(0, 1).setBall(TestUtils.getColoredBall(RED));
+		setBallToField(0, 0, ball);
+		setBallToField(0, 1, TestUtils.getColoredBall(RED));
 		field.moveBall(field.getCell(0, 1), field.getCell(0, 2));
 
-		assertFalse(field.getCell(0, 0).isEmpty());
+		assertFalse(isEmptyCell(0, 0));
 		assertSame(field.getCell(0, 0).getBall(), ball);
 	}
 
@@ -144,8 +152,9 @@ public class FieldTest extends TestCase {
 		};
 		field.setFillStrategy(fillStrategy);
 
-		field.getCell(0, 0).setBall(TestUtils.getColoredBall(RED));
-		field.getCell(0, 2).setBall(TestUtils.getColoredBall(RED));
+		setBallToField(0, 0, TestUtils.getColoredBall(RED));
+		setBallToField(0, 2, TestUtils.getColoredBall(RED));
+
 		field.moveBall(field.getCell(0, 2), field.getCell(0, 1));
 
 		assertFalse(field.getCell(0, 0).isEmpty());

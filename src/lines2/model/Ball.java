@@ -9,15 +9,15 @@ public abstract class Ball {
 		this.ballType = ballType;
 	}
 
-	public final Cell getCell() {
+	public Cell getCell() {
 		return cell;
 	}
 
-	final void setCell(Cell cell) {
+	void setCell(Cell cell) {
 		this.cell = cell;
 	}
 
-	public final BallType getType() {
+	public BallType getType() {
 		return ballType;
 	}
 }

@@ -21,8 +21,19 @@ public final class TestUtils {
 		}
 	}
 
+	private static class CellStub extends Cell {
+		public CellStub(int row, int col, Ball ball) {
+			super(row, col);
+			setBall(ball);
+		}
+	};
+
 	public static Ball getBall() {
 		return new BallStub();
+	}
+
+	public static Cell getCell(int row, int col, Ball ball) {
+		return new CellStub(row, col, ball);
 	}
 
 	public static ColoredBall getColoredBall(Color color) {
