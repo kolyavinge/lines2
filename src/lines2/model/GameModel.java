@@ -1,20 +1,20 @@
 package lines2.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-public final class GameModel implements MoveBallAction {
+public final class GameModel extends GameModelListenerManager implements MoveBallAction {
 
+	private int levelNumber;
 	private Field field;
 	private ScoresCounter scoresCounter;
 	private GameState gameState;
-	private Collection<GameModelListener> listeners;
+	private LevelIterator levelIterator;
 
 	public GameModel() {
-		listeners = new ArrayList<GameModelListener>();
 		gameState = GameState.NORMAL;
-		initField();
-		initScoresCounter();
+		levelIterator = new LevelIterator();
+		Level level = levelIterator.next();
+		initLevel(level);
 	}
 
 	public void moveBall(Cell fromCell, Cell toCell) {
@@ -35,35 +35,30 @@ public final class GameModel implements MoveBallAction {
 		}
 	}
 
-	private void gameOver() {
-		gameState = GameState.GAME_OVER;
-		raiseOnGameOver();
+	private void initLevel(Level level) {
+		levelNumber = level.getNumber();
+		initField(level);
+		initScoresCounter(level);
 	}
 
-	private void initScoresCounter() {
+	private void initScoresCounter(Level level) {
 		ScoresCounter scoresCounter = new ScoresCounter();
 		scoresCounter.setEraseBallScore(10);
-		scoresCounter.setTotalLevelScores(2500);
+		scoresCounter.setTotalLevelScores(level.getTotalLevelScores());
 		setScoresCounter(scoresCounter);
 	}
 
-	private void initField() {
-		FieldLoader fieldLoader = new FieldLoader();
-		Field field = fieldLoader.getField(7, 6);
+	private void initField(Level level) {
+		Field field = new Field(level.getFieldRows(), level.getFieldCols());
+		field.setEraseStrategy(level.getEraseStrategy());
+		field.setFillStrategy(level.getFillStrategy());
+		field.setMoveStrategy(new SimpleMoveStrategy());
+		field.populate();
 		setField(field);
 	}
 
-	public void addListener(GameModelListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeListener(GameModelListener listener) {
-		listeners.remove(listener);
-	}
-
-	private void raiseOnGameOver() {
-		for (GameModelListener listener : listeners)
-			listener.onGameOver();
+	public int getLevelNumber() {
+		return levelNumber;
 	}
 
 	public Field getField() {
@@ -88,6 +83,16 @@ public final class GameModel implements MoveBallAction {
 		return gameState;
 	}
 
+	private void gameOver() {
+		gameState = GameState.GAME_OVER;
+		raiseOnGameOver();
+	}
+
+	private void gameComplete() {
+		gameState = GameState.GAME_COMPLETE;
+		raiseOnGameComplete();
+	}
+
 	/* ------------------- FieldListener ------------------- */
 
 	private final DefaultFieldListener fieldListener = new DefaultFieldListener() {
@@ -104,6 +109,13 @@ public final class GameModel implements MoveBallAction {
 
 		@Override
 		public void onScoreComplete(ScoresCounter scoresCounter) {
+			if (levelIterator.hasNext()) {
+				Level level = levelIterator.next();
+				initLevel(level);
+				raiseOnLevelChanged();
+			} else {
+				gameComplete();
+			}
 		}
 	};
 }

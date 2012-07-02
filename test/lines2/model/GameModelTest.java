@@ -11,6 +11,12 @@ public class GameModelTest extends TestCase {
 		gameModel = new GameModel();
 	}
 	
+	public void testInit() {
+		assertEquals(GameState.NORMAL, gameModel.getGameState());
+		assertNotNull(gameModel.getField());
+		assertNotNull(gameModel.getScoresCounter());
+	}
+	
 	public void testChangeScores() {
 		Field field = new Field(10, 10);
 		field.setMoveStrategy(TestUtils.getMoveStrategyStub());

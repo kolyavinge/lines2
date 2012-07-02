@@ -18,28 +18,43 @@ public class Lines2Activity extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		gameModel = new GameModel();
 		gameModel.addListener(gameModelListener);
-		gameModel.getScoresCounter().addListener(scoresCounterListener);
-		setScoresInTitleBar(gameModel.getScoresCounter());
-		initFieldView(gameModel);
+		initLevel();
 	}
 
-	private void initFieldView(GameModel gameModel) {
+	private void initLevel() {
+		initScoresCounter();
+		initFieldView();
+	}
+
+	private void initScoresCounter() {
+		gameModel.getScoresCounter().addListener(scoresCounterListener);
+		setTextInTitleBar();
+	}
+
+	private void initFieldView() {
 		FieldPresenter fieldPresenter = new FieldPresenter(gameModel.getField(), gameModel);
 		BallViewFactory ballViewFactory = new BallViewFactory(this);
 		FieldView fieldView = new FieldView(fieldPresenter, ballViewFactory, this);
 		setContentView(fieldView);
 	}
 
-	private void setScoresInTitleBar(ScoresCounter scoresCounter) {
+	private void setTextInTitleBar() {
+		ScoresCounter scoresCounter = gameModel.getScoresCounter();
 		int current = scoresCounter.getCurrentScores();
 		int total = scoresCounter.getTotalLevelScores();
-		String scoresString = String.format("Очки: %d / %d", current, total);
+		int levelNumber = gameModel.getLevelNumber() + 1;
+		String scoresString = String.format("Уровень: %d | Очки: %d / %d", levelNumber, current, total);
 		setTitle(scoresString);
 	}
-	
+
 	/* -------------------------- GameModelListener -------------------------- */
-	
+
 	private final DefaultGameModelListener gameModelListener = new DefaultGameModelListener() {
+
+		@Override
+		public void onLevelChanged() {
+			initLevel();
+		}
 
 		@Override
 		public void onGameOver() {
@@ -49,12 +64,12 @@ public class Lines2Activity extends Activity {
 	};
 
 	/* -------------------------- ScoresCounterListener -------------------------- */
-	
+
 	private final DefaultScoresCounterListener scoresCounterListener = new DefaultScoresCounterListener() {
 
 		@Override
 		public void onScoreChanged(ScoresCounter scoresCounter) {
-			setScoresInTitleBar(scoresCounter);
+			setTextInTitleBar();
 		}
 	};
 }

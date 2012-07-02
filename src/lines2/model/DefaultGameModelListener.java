@@ -7,4 +7,7 @@ public class DefaultGameModelListener implements GameModelListener {
 
 	public void onGameOver() {
 	}
+
+	public void onGameComplete() {
+	}
 }
